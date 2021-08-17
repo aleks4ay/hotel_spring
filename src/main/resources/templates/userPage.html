@@ -1,15 +1,18 @@
-<%@include file="head/headerPrefixAndLanguage.jsp"%>
-<%@include file="head/head.jsp"%>
-
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
 <body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
 
-<%@include file="head/navbar.jsp"%>
 
 <div class="container-fluid" style="margin-top:10px">
     <div class="row">
 
         <div class="col-sm-2">
-            <%--<%@include file="head/leftForm.jsp"%>--%>
+            <div th:if="" th:insert="~{fragments/header :: filters}"> </div>
+
+
             <c:if test="${(action == 'room') or (action == 'filter')}">  <%@include file="usr/filters.jsp"%> </c:if>
 
             <c:if test="${(sessionScope.get('user').client) and (action != 'room') and (action != 'filter')}">
@@ -53,12 +56,33 @@
         <div class="col-sm-2">
 
             <c:if test="${(fn:contains(action, 'room')) and (sessionScope.get('user').client)}">
-                <%@include file="usr/newProposal.jsp"%>
+                <!--<%@include file="usr/newProposal.jsp"%>-->
             </c:if>
 
         </div>
     </div>
 </div>
 
+
+<!--
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+        <div class="col-sm-2">
+            <form th:insert="~{fragments/forms :: leftForm}"> </form>
+
+        </div>
+
+        <div class="col-sm-8">
+            <h1>It is site about 'Hotel'.</h1>
+            <h1>There are work for learning Java Enterprise technologies</h1>
+
+        </div>
+
+        <div class="col-sm-2"> </div>
+    </div>
+</div>-->
+
+
+<div th:insert="~{fragments/header :: footer}"> </div>
 </body>
 </html>

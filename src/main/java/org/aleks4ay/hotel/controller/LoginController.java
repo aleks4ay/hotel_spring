@@ -30,11 +30,13 @@ public class LoginController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public String execute(HttpServletRequest request, Model model,
+    public String execute(/*@ModelAttribute User user,*/
+            HttpServletRequest request, Model model,
                           @RequestParam String login,
-                          @RequestParam String pass) {
+                          @RequestParam String password) {
         System.out.println("login = " + login);
-        System.out.println("pass = " + pass);
+        System.out.println("pass = " + password);
+
         if (!userService.checkLogin(login)) {
             log.info("Login '{}' is wrong!", login);
             model.addAttribute("wrongLogin", "Login is wrong!");
@@ -42,7 +44,7 @@ public class LoginController {
             return "login";
         }
 
-        if (!userService.checkPassword(login, pass)) {
+        if (!userService.checkPassword(login, password)) {
             log.info("Login '{}' or password is wrong!", login);
             model.addAttribute("wrongPass", "Password is wrong!");
             model.addAttribute("oldLogin", login);
@@ -65,7 +67,7 @@ public class LoginController {
                 if (user.isClient()) {
                     model.addAttribute("action", "room");
                     log.info("User '{}' exited on site", login);
-                    return "redirect:/user?action=room";
+                    return "redirect:/user/room";
                 }
             }
             return "index";

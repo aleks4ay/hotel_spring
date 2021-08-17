@@ -20,5 +20,7 @@ public interface RoomRepo extends CrudRepository<Room, Long> {
 
 
     List<Room> findAllByCategoryAndGuests(Category category, Integer guests);
+    List<Room> findAllByCategory(Category category);
+    List<Room> findAllByGuests(Integer guests);
 
 }

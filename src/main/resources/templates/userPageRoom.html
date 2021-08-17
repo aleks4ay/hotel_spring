@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+            <!--<div th:insert="~{fragments/forms :: filters}"> </div>-->
+        </div>
+
+        <div class="col-sm-8">
+
+            <div>
+                <h2> [[#{adm_act_2}]]  </h2>
+
+                <!--<div th:insert="~{fragments/forms :: dateField}"> </div>-->
+
+                <table class="table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col"> [[#{n}]] </th>
+                        <th scope="col"> [[#{number}]] </th>
+                        <th scope="col"> [[#{category}]] </th>
+                        <th scope="col"> [[#{guests}]] </th>
+                        <th scope="col"> [[#{description}]] </th>
+                        <th scope="col"> [[#{price}]] </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="room,step : ${rooms}">
+                        <th scope="row">
+                            <input type="hidden" value="#" th:value="${room.id}"/>
+                            <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+                        </th>
+                        <td th:text="${room.number}"></td>
+                        <td th:text="${room.category.title}"></td>
+                        <td th:text="${room.guests}"></td>
+                        <td th:text="${room.description}"></td>
+                        <td th:text="${room.price}"></td>
+                        <td th:test="${#httpServletRequest.remoteUser != Null}">
+                            <a href="#" th:href="'/user/booking?id=' + ${room.id}"> [[#{act_2}]] </a>
+                        </td>
+                        <td th:test="${#httpServletRequest.remoteUser == Null}">
+                            [[#{act_2}]]
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <h3 th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </h3>
+
+                <%@include file="../head/pagination.jsp"%>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-2">
+            <!--<div th:if="${#httpServletRequest.isUserInRole('USER')}" th:insert="~{fragments/header :: newProposal}"> </div>-->
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

@@ -1,21 +1,84 @@
-package org.aleks4ay.hotel.command;
+package org.aleks4ay.hotel.controller;
 
-import org.aleks4ay.hotel.model.*;
-import org.aleks4ay.hotel.service.*;
+import org.aleks4ay.hotel.model.Category;
+import org.aleks4ay.hotel.model.Room;
+import org.aleks4ay.hotel.service.OrderService;
+import org.aleks4ay.hotel.service.RoomService;
+import org.aleks4ay.hotel.service.ScheduleService;
+import org.aleks4ay.hotel.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-class UserCommand {
+@Controller
+public class UserController {
     private static final int POSITION_ON_PAGE = 5;
 
-    /*@Override
-    public String execute(HttpServletRequest request) {
+
+    @Autowired
+    private ScheduleService scheduleService;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private UserService userService;
+
+
+
+    @GetMapping("/user")
+    public String getUserPage(Map<String, Object> model) {
+
+
+/*        OrderService orderService = new OrderService();
+        final Optional<User> user1 = orderService.userService.getByLogin("12");
+        final Optional<Order> order = orderService.getById(1000006L);
+        System.out.println(order);
+        List<Order> orders = orderService.getAll();
+        orders.forEach(System.out::println);*/
+
+
+//        Room room = roomService.getById(20L).get();
+//        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 13), LocalDate.of(2021, 8, 18), Schedule.RoomStatus.BOOKED, room);
+//        boolean b = scheduleService.checkRoom(schedule);
+//        System.out.println("b=" + b);
+
+/*        Room room = new Room(201, Category.SUITE, 2, "Комната с видом на море", 2200.0);
+        System.out.println("before:" + room);
+        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 11), LocalDate.of(2021, 8, 13), Schedule.RoomStatus.BOOKED, room);
+        room.addSchedule(schedule);
+
+        schedule.setRoom(room);
+        scheduleService.create(schedule);
+        System.out.println("after: " + room);*/
+
+        System.out.println("It's worked");
+
+        return "index";
+    }
+
+
+    @GetMapping("/user/room")
+    public String getRooms(HttpServletRequest request) {
+        List<Room> roomList = roomService.getRooms(request);
+        int page = 1;
+        if (request.getAttribute("pg") != null) {
+            page = (int) request.getAttribute("pg");
+        }
+        roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
+        request.setAttribute("rooms", roomList);
+        request.setAttribute("itemOnPage", POSITION_ON_PAGE);
+        request.setAttribute("pg", page);
+        return "userPageRoom";
+    }
+
+
+   /* public String execute(HttpServletRequest request) {
         String userType = (String) request.getAttribute("userType");
 
         User user = (User) request.getSession().getAttribute("user");
@@ -80,32 +143,6 @@ class UserCommand {
     }
 
 
-    private String getRoom(HttpServletRequest request) {
-        RoomService roomService = new RoomService();
-        List<Room> roomList;
-        List<String> filters = new ArrayList<>();
-
-        Object categoryObj = request.getAttribute("category");
-        Object guestsObj = request.getAttribute("guests");
-
-        if (categoryObj != null) {
-            filters.add(" category = '" + request.getAttribute("category") + "'");
-        }
-        if (guestsObj != null) {
-            filters.add(" guests = " + request.getAttribute("guests"));
-        }
-
-        if (filters.size() > 0) {
-            filters.forEach(System.out::println);
-            roomList = roomService.getAllWithFilters(filters);
-        } else {
-            roomList = roomService.getAll();
-        }
-        roomList = roomService.doPagination(POSITION_ON_PAGE, (int) request.getAttribute("pg"), roomList);
-
-        request.setAttribute("rooms", roomList);
-        return "WEB-INF/jsp/userPage.jsp";
-    }
 
 
     private String doFiltering(HttpServletRequest request) {
@@ -233,5 +270,4 @@ class UserCommand {
         return "WEB-INF/jsp/userPage.jsp";
     }*/
 
-    // TODO: 10.08.2021  getDateStart(),  getDateEnd()
 }
