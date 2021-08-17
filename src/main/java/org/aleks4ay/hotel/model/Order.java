@@ -1,28 +1,37 @@
 package org.aleks4ay.hotel.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-public class Order extends BaseEntity {
+@Entity
+@Table(name = "orders")
+public class Order {
 
+    @Id
+    @GeneratedValue
+    private long id;
     private LocalDateTime registered = LocalDateTime.now();
     private double correctPrice;
     private Status status;
 
-    private Room room;
+//    private Room room;
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
     public Order() {
     }
 
-    public Order(long id) {
-        super(id);
+    public long getId() {
+        return id;
     }
 
-    public Order(Room room, LocalDateTime registered) {
-        this.room = room;
-        this.correctPrice = room.getPrice();
-        this.registered = registered;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -33,14 +42,14 @@ public class Order extends BaseEntity {
         this.user = user;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
+//    public Room getRoom() {
+//        return room;
+//    }
+/*
     public void setRoom(Room room) {
         this.room = room;
         this.correctPrice = room.getPrice();
-    }
+    }*/
 
     public Schedule getSchedule() {
         return schedule;
@@ -48,6 +57,7 @@ public class Order extends BaseEntity {
 
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+        this.correctPrice = schedule.getRoom().getPrice();
     }
 
     public LocalDateTime getRegistered() {
@@ -81,13 +91,13 @@ public class Order extends BaseEntity {
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", registered=" + registered +
                 ", arrival=" + schedule.getArrival() +
                 ", departure=" + schedule.getDeparture() +
                 ", correctPrice=" + correctPrice +
                 ", status=" + status +
-                ", room=" + room.getNumber() +
+//                ", room=" + room.getNumber() +
                 ", user=" + user.getLogin() +
                 '}';
     }

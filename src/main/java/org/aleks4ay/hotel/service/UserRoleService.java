@@ -1,8 +1,5 @@
 package org.aleks4ay.hotel.service;
 
-import org.aleks4ay.hotel.dao.ConnectionPool;
-import org.aleks4ay.hotel.dao.UserRoleDao;
-import org.aleks4ay.hotel.model.Role;
 
 import java.sql.Connection;
 import java.util.*;

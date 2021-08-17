@@ -1,7 +1,5 @@
 package org.aleks4ay.hotel.service;
 
-import org.aleks4ay.hotel.dao.ConnectionPool;
-import org.aleks4ay.hotel.dao.ProposalDao;
 import org.aleks4ay.hotel.model.Proposal;
 import org.aleks4ay.hotel.model.User;
 
@@ -11,7 +9,7 @@ import java.util.*;
 public class ProposalService {
     private UserService userService = new UserService();
 
-    public Optional<Proposal> getById(Long id) {
+   /* public Optional<Proposal> getById(Long id) {
         Connection conn = ConnectionPool.getConnection();
         ProposalDao proposalDao = new ProposalDao(conn);
         Optional<Proposal> proposalOptional = proposalDao.findById(id);
@@ -64,14 +62,14 @@ public class ProposalService {
         ConnectionPool.closeConnection(conn);
         return proposalOptional;
     }
-/*
+*//*
     public List<Proposal> getAll(int positionOnPage, int page) {
         Connection conn = ConnectionPool.getConnection();
         ProposalDao proposalDao = new ProposalDao(conn);
         List<Proposal> proposals = proposalDao.findAll(positionOnPage, page);
         ConnectionPool.closeConnection(conn);
         return proposals;
-    }*/
+    }*//*
 
     public List<Proposal> doPagination(int positionOnPage, int page, List<Proposal> entities) {
         return new UtilService<Proposal>().doPagination(positionOnPage, page, entities);
@@ -83,5 +81,5 @@ public class ProposalService {
         boolean result = proposalDao.updateStatus(status.toString(), id);
         ConnectionPool.closeConnection(conn);
         return result;
-    }
+    }*/
 }

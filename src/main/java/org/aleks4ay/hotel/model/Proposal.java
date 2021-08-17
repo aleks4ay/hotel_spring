@@ -6,7 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
-public class Proposal extends BaseEntity {
+public class Proposal {
+    private long id;
     private LocalDateTime registered = LocalDateTime.now();
     private LocalDate arrival;
     private LocalDate departure;
@@ -20,13 +21,12 @@ public class Proposal extends BaseEntity {
     public Proposal() {
     }
 
-    public Proposal(LocalDate arrival, LocalDate departure, int guests, Category category, User user) {
-        this.arrival = arrival;
-        this.departure = departure;
-        this.category = category;
-        this.guests = guests;
-        this.user = user;
-        setPeriod();
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public LocalDateTime getRegistered() {

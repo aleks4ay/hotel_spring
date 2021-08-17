@@ -1,14 +1,14 @@
-<%@include file="jsp/head/headerPrefixAndLanguage.jsp"%>
-<%@include file="jsp/head/head.jsp"%>
+<%@include file="head/headerPrefixAndLanguage.jsp"%>
+<%@include file="head/head.jsp"%>
 
 <body>
 
-<%@include file="jsp/head/navbar.jsp"%>
+<%@include file="head/navbar.jsp"%>
 
 <div class="container-fluid" style="margin-top:10px">
     <div class="row">
         <div class="col-sm-2">
-            <%@include file="jsp/head/leftForm.jsp"%>
+            <%@include file="head/leftForm.jsp"%>
             <%--userType = ${userType}--%>
         </div>
 

@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter( urlPatterns = { "/*" })
-public class UserTypeFilter implements Filter {
-    @Override
+//@WebFilter( urlPatterns = { "/*" })
+public class UserTypeFilter /*implements Filter*/ {
+    /*@Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
     }
@@ -38,5 +38,5 @@ public class UserTypeFilter implements Filter {
     @Override
     public void destroy() {
 
-    }
+    }*/
 }

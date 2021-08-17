@@ -11,20 +11,14 @@ import org.aleks4ay.hotel.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-class AdminCommand implements Command {
+class AdminCommand  {
     private final static int POSITION_ON_PAGE = 10;
 
-    @Override
     public String execute(HttpServletRequest request) {
         if(request.getSession().getAttribute("user") == null) {
             return "/WEB-INF/index.jsp";
         }
-        String action = request.getParameter("action");
-/*        String page = request.getParameter("pg");
-        if (page == null) {
-            page = "1";
-        }
-        request.setAttribute("pg", page);*/
+ /*       String action = request.getParameter("action");
         request.setAttribute("itemOnPage", POSITION_ON_PAGE);
 
         if (action == null) {
@@ -62,7 +56,7 @@ class AdminCommand implements Command {
             List<Order> orderList = new OrderService().getAll();
             request.setAttribute("orders", orderList);
 
-        }
+        }*/
         return "WEB-INF/jsp/adminPage.jsp";
     }
 }

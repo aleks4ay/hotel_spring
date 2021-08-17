@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${language}">
+<head  th:fragment="head">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Hotel</title>
+</head>
+<body>
+<div th:fragment="footer">
+    <br>
+    &copy; 2021
+</div>
+
+
+<!--<div th:with="language=${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"></div>-->
+
+<!--<th:setLocale value="${language}" />-->
+<!--<th:setBundle basename="i18n/hotel" />-->
+
+
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav mr-auto" style="font-size: 1.5rem">
+                <li class="nav-item">
+                    <a class="nav-link gap-item" href="/" th:text="#{home}" >  </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link gap-item" href="/user?action=room"> [[#{booking}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('USER')}">
+                    <a class="nav-link gap-item" href="/user?action=room"> [[#{booking}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('USER')}">
+                    <a class="nav-link gap-item" href="/user?action=account&ap=order"> [[#{account}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link gap-item" href="/admin"> [[#{admin}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
+                    <a class="nav-link gap-item" href="/manager"> [[#{manager}]] </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav" style="font-size: 1.2rem; align-items: flex-end">
+                <li>
+                    <label style="color: rgba(60, 189, 234, 0.54)">
+                        <th:if test="${not empty sessionScope.get('user')}">
+                            '${sessionScope.get('user').name}' (${sessionScope.get('user').role.title})
+                        </th:if>
+                        <th:if test="${empty sessionScope.get('user')}">
+                            #{notEntered}
+                        </th:if>
+                    </label>
+                </li>
+                <li>
+                    &nbsp;&nbsp;&nbsp;
+                </li>
+                <li class="nav-item" th:if="${language=='ru'}">
+                    <a class="nav-link" href="/lang?language=ru" style="color: #d54d38"> RU </a>
+                </li>
+                <li class="nav-item" th:if="${language=='ru'}">
+                    <a class="nav-link" href="/lang?language=en"> EN </a>
+                </li>
+                <li class="nav-item" th:if="${language=='en'}">
+                    <a class="nav-link" href="/lang?language=ru"> RU </a>
+                </li>
+                <li class="nav-item" th:if="${language=='en'}">
+                    <a class="nav-link" href="/lang?language=en"  style="color: #d54d38" > EN </a>
+                </li>
+
+                <li>
+                    &nbsp;
+                </li>
+
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser != Null}">
+                    <a class="nav-link" href="logout" th:text="#{logoutNow}">   </a>
+                </li>
+
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link" href="login" th:text="#{loginNow}">  </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link" href="registration" th:text="#{registration}"> </a>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+
+</div>
+
+
+
+ <!--   <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <a class="navbar-brand" href="/">H O T E L</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav mr-auto">
+                &lt;!&ndash;            <li class="nav-item">
+                              <a class="nav-link" href="/home">Home</a>
+                            </li>&ndash;&gt;
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Магазин</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">Корзина</a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link" href="/registration">Регистрация</a>
+                </li>
+
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link" href="/admin/users">Пользователи</a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link" href="/admin/user_carts">Заказы</a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link" href="/admin/product">Товары</a>
+                </li>
+            </ul>
+
+            <div class="form-inline my-2 my-lg-0">
+                <h4 th:text="${#httpServletRequest.remoteUser}" style="margin-right: 10px; color: #f8f9fa">#</h4>
+                <div th:if="${#httpServletRequest.remoteUser == Null}">
+                    <form th:action="@{/login}" method="get">
+                        <input type="submit" value="Вход" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                </div>
+                <div th:unless="${#httpServletRequest.remoteUser == Null}">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" value="Выход" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav> -->
+</body>
+</html>

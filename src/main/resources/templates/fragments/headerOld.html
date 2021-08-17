@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head  th:fragment="head">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <title>Hotel</title>
+</head>
+<body>
+    <div th:fragment="footer">
+      <br>
+      &copy; 2021
+    </div>
+
+    <div th:fragment="navbar">
+      <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <a class="navbar-brand" href="/">H O T E L</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav mr-auto">
+<!--            <li class="nav-item">
+              <a class="nav-link" href="/home">Home</a>
+            </li>-->
+            <li class="nav-item">
+              <a class="nav-link" href="/shop">Магазин</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/cart">Корзина</a>
+            </li>
+            <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                <a class="nav-link" href="/registration">Регистрация</a>
+            </li>
+
+            <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                <a class="nav-link" href="/admin/users">Пользователи</a>
+            </li>
+            <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                <a class="nav-link" href="/admin/user_carts">Заказы</a>
+            </li>
+            <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                <a class="nav-link" href="/admin/product">Товары</a>
+            </li>
+          </ul>
+
+          <div class="form-inline my-2 my-lg-0">
+              <h4 th:text="${#httpServletRequest.remoteUser}" style="margin-right: 10px; color: #f8f9fa">#</h4>
+              <div th:if="${#httpServletRequest.remoteUser == Null}">
+                <form th:action="@{/login}" method="get">
+                    <input type="submit" value="Вход" class="btn btn-outline-success my-2 my-sm-0"/>
+                </form>
+              </div>
+              <div th:unless="${#httpServletRequest.remoteUser == Null}">
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Выход" class="btn btn-outline-success my-2 my-sm-0"/>
+                </form>
+              </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+</body>
+</html>

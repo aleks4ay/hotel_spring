@@ -4,30 +4,9 @@
 
 <body>
 
-<%--<%@include file="head/navbar.jsp"%>--%>
-
-
-
-<%--<form name="loginForm" method="POST" action="controller">
-    <input type="hidden" name="command" value="login" />
-    Login:<br/>
-    <input type="text" name="login" value=""/>
-    <br/>Password:<br/>
-    <input type="password" name="password" value=""/>
-    <br/>
-    ${errorLoginPassMessage}
-    <br/>
-    ${wrongAction}
-    <br/>
-    ${nullPage}
-    <br/>
-    <input type="submit" value="Log in"/>
-</form>--%>
-
-
 
 <div class="center1">
-    <form class="inner_logo" method="post" action="/login"> <%--action="controller"--%>
+    <form class="inner_logo" method="post" action="login"> <%--action="controller"--%>
         <%--<input type="hidden" name="command" value="login" />--%>
         <div class="mb-3">
             <label for="login1" class="form-label"> Login </label>

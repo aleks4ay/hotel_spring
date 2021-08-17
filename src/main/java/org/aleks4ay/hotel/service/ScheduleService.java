@@ -1,42 +1,35 @@
 package org.aleks4ay.hotel.service;
 
-import org.aleks4ay.hotel.dao.ConnectionPool;
-import org.aleks4ay.hotel.dao.ScheduleDao;
 import org.aleks4ay.hotel.model.Room;
 import org.aleks4ay.hotel.model.Schedule;
+import org.aleks4ay.hotel.repository.ScheduleRepo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.util.*;
 
-public class ScheduleService {
+@Service
+@Transactional(readOnly = true)
+public class ScheduleService{
+
+    private ScheduleRepo scheduleRepo;
     private static final Logger log = LogManager.getLogger(ScheduleService.class);
-//    private RoomService roomService = new RoomService();
+
+    @Autowired
+    public void setScheduleRepo(ScheduleRepo scheduleRepo) {
+        this.scheduleRepo = scheduleRepo;
+    }
 
     public Optional<Schedule> getById(long id) {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-        Optional<Schedule> scheduleOptional = dao.getById(id);
-//        if (scheduleOptional.isPresent()) {
-//            long roomId = scheduleOptional.get().getRoom().getId();
-//            Schedule schedule = scheduleOptional.get();
-//            schedule.setRoom(roomService.getById(roomId).orElse(null));
-//        }
-        ConnectionPool.closeConnection(conn);
-        return scheduleOptional;
+        return scheduleRepo.findById(id);
     }
 
     public List<Schedule> getAll() {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-//        Map<Long, Room> rooms = roomService.getAllAsMap();
-        List<Schedule> schedules = dao.getAll();
-//        for (Schedule s : schedules) {
-//            s.setRoom(rooms.get(s.getRoom().getId()));
-//        }
-        ConnectionPool.closeConnection(conn);
-        return schedules;
+        return (List<Schedule>) scheduleRepo.findAll();
     }
 
     public Map<Long, Schedule> getAllAsMap() {
@@ -67,45 +60,40 @@ public class ScheduleService {
     }
 
 
-
     public boolean checkRoom(Schedule schedule) {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-
-        final boolean result = dao.checkRoom(schedule);
-        if (!result) {
+        final Integer result = scheduleRepo.findAllByRoomId(
+                schedule.getRoom().getId(),
+                java.sql.Date.valueOf(schedule.getArrival()),
+                java.sql.Date.valueOf(schedule.getDeparture()),
+                java.sql.Date.valueOf(schedule.getArrival()),
+                java.sql.Date.valueOf(schedule.getDeparture()));
+        if (result == null || result == 0) {
+            System.out.println("************* N U L L *****************");
+            return true;
+        }
+        if (result > 0) {
             log.info("Selected room #{} already occupied.", schedule.getRoom().getNumber());
+            return false;
         }
-        ConnectionPool.closeConnection(conn);
-        return result;
+        return true;
     }
 
-    public boolean createSchedule(Schedule schedule) {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-
-        final boolean result = dao.createSchedule(schedule);
-        if (!result) {
-            log.info("Can't insert new Schedule to DB. {}", schedule);
-        }
-        ConnectionPool.closeConnection(conn);
-        return result;
+    @Transactional
+    public Schedule create(Schedule schedule) {
+//        System.out.println(schedule);
+//        final Optional<Room> room = new RoomService().getById(20L);
+//        schedule.setRoom(room.get());
+//        Schedule schedule1 = scheduleRepo.save(schedule);
+//        System.out.println("schedule1 = " + schedule1);
+        return scheduleRepo.save(schedule);
     }
 
-    public boolean updateStatus(Schedule schedule) {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-        boolean result = dao.updateStatus(schedule);
-        ConnectionPool.closeConnection(conn);
-        return result;
+    @Transactional
+    public Schedule updateStatus(Schedule schedule) {
+        return scheduleRepo.save(schedule);
     }
 
     public List<Schedule> getScheduleByRoomId(long roomId) {
-        Connection conn = ConnectionPool.getConnection();
-        ScheduleDao dao = new ScheduleDao(conn);
-        List<Schedule> schedules = dao.getScheduleByRoomId(roomId);
-        ConnectionPool.closeConnection(conn);
-        return schedules;
+        return scheduleRepo.findAllByRoomId(roomId);
     }
-
 }

@@ -1,48 +1,56 @@
 package org.aleks4ay.hotel.model;
 
-import org.aleks4ay.hotel.service.UserService;
-
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class User extends BaseEntity{
+@Entity
+@Table(name = "usr")
+public class User {
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(unique = true)
     private String login;
     private String name;
     private String surname;
     private String password;
-    private boolean active = true;
+    private boolean active = false;
     private LocalDateTime registered = LocalDateTime.now();
-    private Role role;
     private double bill;
+    private Role role;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
 
     public User() {
     }
 
     public User(long id) {
-        super(id);
+        this.id = id;
     }
 
-    public static void main(String[] args) {
-        User user1 = new User(12L, "login1", "name", "surname", "pass1");
-        System.out.println("user1=" + user1);
-        new UserService().create("login1", "name", "surname", "pass1");
-    }
-
-    public User(String login, String password) {
-        this.login = login;
-        this.password = password;
-    }
-
-    public User(Long id, String login, String name, String surname, String password) {
-        setId(id);
+    public User(String login, String name, String surname, String password, boolean active, LocalDateTime registered,
+                double bill, Role role) {
         this.login = login;
         this.name = name;
         this.surname = surname;
         this.password = password;
+        this.active = active;
+        this.registered = registered;
+        this.bill = bill;
+        this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLogin() {
@@ -120,7 +128,6 @@ public class User extends BaseEntity{
         for (Order o : orders) {
             addOrder(o);
         }
-//        this.orders = orders;
     }
 
     public void addOrder(Order order) {
@@ -155,7 +162,18 @@ public class User extends BaseEntity{
                 ", active=" + active +
                 ", registered=" + registered +
                 ", role=" + role +
-                ", orders=" + orders +
+//                ", orders=" + orders +
                 '}';
+    }
+
+    public enum Role {
+        ROLE_GUEST,
+        ROLE_USER,
+        ROLE_MANAGER,
+        ROLE_ADMIN;
+
+        public String getTitle() {
+            return this.toString().replace("ROLE_", "");
+        }
     }
 }

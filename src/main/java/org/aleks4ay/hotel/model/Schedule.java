@@ -1,20 +1,26 @@
 package org.aleks4ay.hotel.model;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class Schedule extends BaseEntity {
+@Entity
+@Table(name = "timetable")
+public class Schedule implements Serializable {
+
+    @Id
+    @GeneratedValue
+    private long id;
     private LocalDate arrival;
     private LocalDate departure;
     private RoomStatus status;
 
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_id")
     private Room room;
 
     public Schedule() {
-    }
-
-    public Schedule(long id) {
-        super(id);
     }
 
     public Schedule(LocalDate arrival, LocalDate departure, RoomStatus status, Room room) {
@@ -24,7 +30,13 @@ public class Schedule extends BaseEntity {
         this.room = room;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public LocalDate getArrival() {
         return arrival;
@@ -56,7 +68,6 @@ public class Schedule extends BaseEntity {
 
     public void setRoom(Room room) {
         this.room = room;
-//        room.addSchedule(this);
     }
 
     public int getPeriod() {
@@ -66,11 +77,11 @@ public class Schedule extends BaseEntity {
     @Override
     public String toString() {
         return "Schedule{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", arrival=" + arrival +
                 ", departure=" + departure +
                 ", status=" + status +
-                ", room=" + room.getNumber() +
+                ", room=" + room +
                 '}';
     }
 

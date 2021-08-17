@@ -28,10 +28,7 @@
                 </li>
             </c:if>
         </ul>
-        <%--<form class="form-inline my-2 my-lg-0">--%>
-            <%--<input class="form-control mr-sm-2" type="text" placeholder="Search">--%>
-            <%--<button class="btn btn-success my-2 my-sm-0" type="button">Search</button>--%>
-        <%--</form>--%>
+
         <ul class="navbar-nav" style="font-size: 1.2rem; align-items: flex-end">
             <li>
                 <label style="color: rgba(60, 189, 234, 0.54)">

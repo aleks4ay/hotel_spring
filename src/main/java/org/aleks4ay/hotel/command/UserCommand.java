@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-class UserCommand implements Command {
+class UserCommand {
     private static final int POSITION_ON_PAGE = 5;
 
-    @Override
+    /*@Override
     public String execute(HttpServletRequest request) {
         String userType = (String) request.getAttribute("userType");
 
@@ -147,11 +147,11 @@ class UserCommand implements Command {
             List<Order> orderList = new OrderService().getAllByUser(user);
             user.setOrders(orderList);
             request.setAttribute("orders", orderList);
-        //user?action=account&ap=proposal
+            //user?action=account&ap=proposal
         } else if (actionPage.equalsIgnoreCase("proposal")) {
             List<Proposal> proposalList = new ProposalService().getAllByUser(user);
             request.setAttribute("proposals", proposalList);
-        //user?action=account&ap=bill
+            //user?action=account&ap=bill
         } else if (actionPage.equalsIgnoreCase("bill")) {
             request.setAttribute("bill", user.getBill());
 
@@ -231,7 +231,7 @@ class UserCommand implements Command {
         request.setAttribute("arrival", dateStart);
         request.setAttribute("departure", dateEnd);
         return "WEB-INF/jsp/userPage.jsp";
-    }
+    }*/
 
     // TODO: 10.08.2021  getDateStart(),  getDateEnd()
 }

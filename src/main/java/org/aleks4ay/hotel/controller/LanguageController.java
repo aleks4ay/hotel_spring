@@ -1,19 +1,21 @@
-package org.aleks4ay.hotel.command;
+package org.aleks4ay.hotel.controller;
 
 import org.aleks4ay.hotel.model.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-class Language implements Command {
+@Controller
+public class LanguageController {
 
-    @Override
-    public String execute(HttpServletRequest request) {
-        final String language = request.getParameter("language");
+    @GetMapping("/lang")
+    public String execute(HttpServletRequest request, HttpSession session, @RequestParam(defaultValue = "ru") String language) {
 
-        HttpSession session = request.getSession();
         session.setAttribute("language", language);
 
         User user = (User) session.getAttribute("user");
@@ -26,6 +28,6 @@ class Language implements Command {
                 e.printStackTrace();
             }
         }
-        return "WEB-INF/index.jsp";
+        return "index";
     }
 }

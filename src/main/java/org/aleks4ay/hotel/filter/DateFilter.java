@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@WebFilter( urlPatterns = { "/user" })
-public class DateFilter implements Filter {
-    @Override
+//@WebFilter( urlPatterns = { "/user" })
+public class DateFilter /*implements Filter*/ {
+    /*@Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
     }
@@ -49,5 +49,5 @@ public class DateFilter implements Filter {
     @Override
     public void destroy() {
 
-    }
+    }*/
 }
