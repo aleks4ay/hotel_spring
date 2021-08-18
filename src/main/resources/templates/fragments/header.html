@@ -47,8 +47,8 @@
 
             <ul class="navbar-nav" style="font-size: 1.2rem; align-items: flex-end">
                 <li>
-                    <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.remoteUser != null}"
-                           th:text="${' '+#httpServletRequest.remoteUser.name+' ('+#httpServletRequest.remoteUser.role.title+')'}">
+                    <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.remoteUser}"
+                           th:text="${' '+#httpServletRequest.remoteUser+' '}">
                     </label>
                     <label style="color: rgba(60, 189, 234, 0.54)"
                            th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}">
@@ -75,8 +75,40 @@
                     &nbsp;
                 </li>
 
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser != Null}">
-                    <a class="nav-link" href="logout" th:text="#{logoutNow}">   </a>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser}">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" th:value="#{logoutNow}" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                    <!--<a class="nav-link" th:href="@{/logout}" th:text="#{logoutNow}">   </a>-->
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link" href="login" th:text="#{loginNow}">  </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                    <a class="nav-link" href="registration" th:text="#{registration}"> </a>
+                </li>
+
+
+
+<!--                <div th:if="${#httpServletRequest.remoteUser == Null}">
+                    <form th:action="@{/login}" method="get">
+                        <input type="submit" th:value="#{loginNow}" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                </div>
+                <div th:if="${#httpServletRequest.remoteUser}">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" th:value="#{logoutNow}" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                </div>
+                <div th:if="${#httpServletRequest.remoteUser == Null}">
+                    <form th:action="@{/registration}" method="get">
+                        <input type="submit" th:value="#{registration}" class="btn btn-outline-success my-2 my-sm-0"/>
+                    </form>
+                </div>-->
+
+
+<!--                <li class="nav-item" th:if="${#httpServletRequest.remoteUser != Null}">
+                    <a class="nav-link" th:href="@{/logout}" th:text="#{logoutNow}">   </a>
                 </li>
 
                 <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
@@ -84,7 +116,7 @@
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
                     <a class="nav-link" href="registration" th:text="#{registration}"> </a>
-                </li>
+                </li>-->
             </ul>
         </div>
     </nav>

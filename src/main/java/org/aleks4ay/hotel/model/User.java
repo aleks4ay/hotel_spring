@@ -1,5 +1,9 @@
 package org.aleks4ay.hotel.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,11 +11,12 @@ import java.util.*;
 
 @Entity
 @Table(name = "usr")
-public class User {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue
     private Long id;
+
 
     @Column(unique = true)
     private String login;
@@ -21,7 +26,12 @@ public class User {
     private boolean active = false;
     private LocalDateTime registered = LocalDateTime.now();
     private double bill;
-    private Role role;
+
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    @ElementCollection(targetClass = Role.class , fetch = FetchType.EAGER) //    @Fetch(FetchMode.SUBSELECT)
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
@@ -34,7 +44,7 @@ public class User {
     }
 
     public User(String login, String name, String surname, String password, boolean active, LocalDateTime registered,
-                double bill, Role role) {
+                double bill) {
         this.login = login;
         this.name = name;
         this.surname = surname;
@@ -42,7 +52,45 @@ public class User {
         this.active = active;
         this.registered = registered;
         this.bill = bill;
-        this.role = role;
+    }
+
+    @Override
+    public Set<GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        for (Role role : getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.toString()));
+        }
+        return authorities;
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return active;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return active;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return active;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
     }
 
     public Long getId() {
@@ -72,14 +120,8 @@ public class User {
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getPassword() {
-        return password;
-//        return Encrypt.hash(password, "SHA-256");
     }
 
     public void setPassword(String password) {
@@ -110,15 +152,17 @@ public class User {
         this.bill = bill;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
-
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
 
     public List<Order> getOrders() {
         return orders;
@@ -136,15 +180,15 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return role.equals(Role.ROLE_ADMIN);
+        return roles.contains(Role.ROLE_ADMIN);
     }
 
     public boolean isManager() {
-        return role.equals(Role.ROLE_MANAGER);
+        return roles.contains(Role.ROLE_MANAGER);
     }
 
     public boolean isClient() {
-        return role.equals(Role.ROLE_USER);
+        return roles.contains(Role.ROLE_USER);
     }
 
     public String getDateByPattern() {
@@ -161,19 +205,9 @@ public class User {
                 ", surname='" + surname + '\'' +
                 ", active=" + active +
                 ", registered=" + registered +
-                ", role=" + role +
+                ", role=" + roles +
 //                ", orders=" + orders +
                 '}';
     }
 
-    public enum Role {
-        ROLE_GUEST,
-        ROLE_USER,
-        ROLE_MANAGER,
-        ROLE_ADMIN;
-
-        public String getTitle() {
-            return this.toString().replace("ROLE_", "");
-        }
-    }
 }

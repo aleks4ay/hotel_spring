@@ -12,24 +12,20 @@
     <form class="inner_logo" method="post" th:action="@{/registration}" th:object="${user}" >
         <div class="mb-3">
             <label for="login1" class="form-label"> Login </label>
-            <input type="text" class="form-control" id="login1" name="login" th:value="${oldLogin != null ? oldLogin :''}">
-            <small class="text-danger" th:if="${wrongLogin!=null}" th:text="#{userExists}"> </small>
-            <small class="text-danger" th:if="${wrongLogin2!=null}" th:text="#{emptyField}"> </small>
+            <input type="text" required class="form-control" id="login1" name="login" th:value="${oldLogin != null ? oldLogin :''}">
+            <small class="text-danger" th:if="${wrongLogin}" th:text="#{userExists}"> </small>
         </div>
         <div class="mb-3">
             <label for="name1" class="form-label" th:text="#{firstName}"> </label>
-            <input type="text" class="form-control" id="name1" name="name"  th:value="${oldFirstName != null ? oldFirstName :''}">
-            <small class="text-danger" th:if="${warnFirstName!=null}" th:text="#{emptyField}"> </small>
+            <input type="text" required class="form-control" id="name1" name="name"  th:value="${oldFirstName != null ? oldFirstName :''}">
         </div>
         <div class="mb-3">
             <label for="name2" class="form-label" th:text="#{lastName}"> </label>
-            <input type="text" class="form-control" id="name2"  name="surname" th:value="${oldLastName != null ? oldLastName : ''}">
-            <small class="text-danger" th:if="${warnLastName!=null}" th:text="#{emptyField}"> </small>
+            <input type="text" required class="form-control" id="name2"  name="surname" th:value="${oldLastName != null ? oldLastName : ''}">
         </div>
         <div class="mb-3">
             <label for="passwordField" class="form-label" th:text="#{password}"> </label>
-            <input type="password" class="form-control" id="passwordField" name="password">
-            <small class="text-danger" th:if="${wrongPass!=null}" th:text="#{wrongPass}"> </small>
+            <input type="password" required class="form-control" id="passwordField" name="password">
         </div>
 
 
