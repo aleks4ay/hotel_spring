@@ -10,7 +10,7 @@
     <div class="row">
 
         <div class="col-sm-2">
-            <!--<div th:insert="~{fragments/forms :: filters}"> </div>-->
+            <div th:insert="~{fragments/forms :: filters}"> </div>
         </div>
 
         <div class="col-sm-8">
@@ -18,7 +18,7 @@
             <div>
                 <h2> [[#{adm_act_2}]]  </h2>
 
-                <!--<div th:insert="~{fragments/forms :: dateField}"> </div>-->
+                <div th:insert="~{fragments/forms :: dateField}"> </div>
 
                 <table class="table">
                     <thead class="thead-light">
@@ -33,10 +33,10 @@
                     </thead>
                     <tbody>
                     <tr th:each="room,step : ${rooms}">
-                        <th scope="row">
+                        <td scope="row">
                             <input type="hidden" value="#" th:value="${room.id}"/>
                             <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
-                        </th>
+                        </td>
                         <td th:text="${room.number}"></td>
                         <td th:text="${room.category.title}"></td>
                         <td th:text="${room.guests}"></td>
@@ -53,7 +53,7 @@
                 </table>
                 <h3 th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </h3>
 
-                <%@include file="../head/pagination.jsp"%>
+                <ul th:insert="~{fragments/header :: pagination}"> </ul>
 
             </div>
 

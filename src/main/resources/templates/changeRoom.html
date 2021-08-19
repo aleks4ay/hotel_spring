@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+
+        </div>
+
+
+        <div class="col-sm-8">
+
+            <form  th:fragment="newroom" class="sticky rounded-lg shadow p-4 mb-4"
+                   th:object="${room}" method="post" th:action="@{/admin/newRoom}"
+                   style="background-color: rgba(96, 162, 218, 0.2);">
+                <div class="mb-3">
+                    <input type="hidden" name="id" th:value="${room.id}"/>
+                    <input type="hidden" name="pg" th:value="${pg}"/>
+                    <label for="field1" class="form-label"> [[#{number}]]:</label>
+                    <input type="number" name="number" th:value="${room.number}" class="form-control" id="field1" disabled />
+                    <small class="text-danger" th:if="${roomExistMessage}" th:text="#{roomExistMessage}"> </small>
+                </div>
+                <div class="mb-3">
+                    <label for="field2" class="form-label"> Room category </label>
+                    <select name="category" th:value="${room.category}" class="col-md-12 form-control" id="field2">
+                        <option value="STANDARD">Select Category</option>
+                        <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"
+                                th:selected="${room.category == item}">
+                        </option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="field3" class="form-label">  [[#{guests}]]: </label>
+                    <select name="guests" th:value="room.guests" id="field3" class="col-md-12 form-control" >
+                        <option value="1" th:selected="${room.guests == 1}"> 1 </option>
+                        <option value="2" th:selected="${room.guests == 2}"> 2 </option>
+                        <option value="3" th:selected="${room.guests == 3}"> 3 </option>
+                        <option value="4" th:selected="${room.guests == 4}"> 4 </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="field4" class="form-label"> [[#{description}]]: </label>
+                    <input type="text" class="form-control" id="field4" name="description" required
+                           th:value="${room.description}"/>
+                </div>
+                <div class="mb-3">
+                    <label for="field5" class="form-label"> [[#{price}]]: </label>
+                    <input type="number" class="form-control" id="field5" name="price" required
+                           th:value="${room.price}"/>
+                </div>
+
+                <div >
+                    <button type="submit" class="btn btn-outline-success" > [[#{save}]] </button>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-sm-2">
+            <!--<div th:if="${rooms}" th:insert="~{fragments/admin :: newroom}"> </div>-->
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

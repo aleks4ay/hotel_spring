@@ -1,25 +1,31 @@
 package org.aleks4ay.hotel.controller;
 
+import org.aleks4ay.hotel.model.Category;
+import org.aleks4ay.hotel.model.Order;
 import org.aleks4ay.hotel.model.Room;
+import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.service.OrderService;
 import org.aleks4ay.hotel.service.RoomService;
-import org.aleks4ay.hotel.service.ScheduleService;
 import org.aleks4ay.hotel.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class AdminController {
-    private static final int POSITION_ON_PAGE = 10;
+    private static final Logger log = LogManager.getLogger(AdminController.class);
+    private static final int POSITION_ON_PAGE = 3;
 
-
-    @Autowired
-    private ScheduleService scheduleService;
     @Autowired
     private RoomService roomService;
     @Autowired
@@ -31,79 +37,103 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getUserPage(Map<String, Object> model) {
-
-
-/*        OrderService orderService = new OrderService();
-        final Optional<User> user1 = orderService.userService.getByLogin("12");
-        final Optional<Order> order = orderService.getById(1000006L);
-        System.out.println(order);
-        List<Order> orders = orderService.getAll();
-        orders.forEach(System.out::println);*/
-
-
-//        Room room = roomService.getById(20L).get();
-//        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 13), LocalDate.of(2021, 8, 18), Schedule.RoomStatus.BOOKED, room);
-//        boolean b = scheduleService.checkRoom(schedule);
-//        System.out.println("b=" + b);
-
-/*        Room room = new Room(201, Category.SUITE, 2, "Комната с видом на море", 2200.0);
-        System.out.println("before:" + room);
-        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 11), LocalDate.of(2021, 8, 13), Schedule.RoomStatus.BOOKED, room);
-        room.addSchedule(schedule);
-
-        schedule.setRoom(room);
-        scheduleService.create(schedule);
-        System.out.println("after: " + room);*/
-
-        System.out.println("It's worked");
-
+        model.put("itemOnPage", POSITION_ON_PAGE);
         return "index";
     }
 
-    public String execute(HttpServletRequest request) {
-        if(request.getSession().getAttribute("user") == null) {
-            return "/WEB-INF/index.jsp";
-        }
- /*       String action = request.getParameter("action");
-        request.setAttribute("itemOnPage", POSITION_ON_PAGE);
-
-        if (action == null) {
-            action = "user";
-        }
-
-        if (action.equalsIgnoreCase("newRoom")){
-            int number = Integer.parseInt(request.getParameter("number"));
-            String description = request.getParameter("description");
-            Double price = Double.parseDouble(request.getParameter("price"));
-            int guests = Integer.parseInt(request.getParameter("guests"));
-            Category category = Category.valueOf(request.getParameter("category"));
-
-            new RoomService().create(new Room(number, category, guests, description, price));
-            return "redirect:/admin?action=room";
-        }
-
-        request.setAttribute("action", action);
-
-        if (action.equalsIgnoreCase("user")) {
-            UserService userService = new UserService();
-            List<User> userList = userService.getAll();
-            userList = userService.doPagination(POSITION_ON_PAGE, (int) request.getAttribute("pg"), userList);
-            request.setAttribute("users", userList);
-
-        } else if (action.equalsIgnoreCase("room")){
-            RoomService roomService = new RoomService();
-            List<Room> roomList = roomService.getAll();
-//            request.getAttribute("pg");
-            roomList = roomService.doPagination(POSITION_ON_PAGE, (int) request.getAttribute("pg"), roomList); // TODO: 10.08.2021
-            request.setAttribute("rooms", roomList);
-            request.setAttribute("categories", Category.values());
-
-        } else if (action.equalsIgnoreCase("order")){
-            List<Order> orderList = new OrderService().getAll();
-            request.setAttribute("orders", orderList);
-
-        }*/
-        return "WEB-INF/jsp/adminPage.jsp";
+    @GetMapping("/admin/room")
+    public String getRoomPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        List<Room> roomList = roomService.getRooms(request);
+        roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
+        model.put("rooms", roomList);
+        model.put("categories", Category.values());
+        model.put("action", "room");
+        return "adminPage";
     }
 
+
+    @GetMapping("/admin/newRoom")
+    public String newRoom(@ModelAttribute Room room, Map<String, Object> model, HttpServletRequest request) {
+        return "redirect:/admin/room";
+    }
+
+    @PostMapping("/admin/newRoom")
+    public String saveNewRoom(@ModelAttribute Room room, Map<String, Object> model, HttpServletRequest request) {
+        if (room.getId() > 0L) {
+            roomService.update(room);
+            log.info("Was update Room '{}'", room);
+            return "redirect:/admin/room?pg=" + initPageAttributes(model, request);
+        }
+        int number = room.getNumber();
+        String description = room.getDescription();
+        Double price = room.getPrice();
+        int guests = room.getGuests();
+        Category category = room.getCategory();
+
+        if (roomService.checkNumber(number)) {
+            model.put("roomExistMessage", "Room with this number exists!");
+            model.put("oldNumber", number);
+            model.put("oldDescription", description);
+            model.put("oldGuests", guests);
+            model.put("oldPrice", price);
+            model.put("oldCategory", category);
+            return getRoomPage(model, request);
+        }
+        roomService.save(room);
+        log.info("Was save new Room '{}'", room);
+        return "redirect:/admin/room";
+    }
+
+
+    @GetMapping("/admin/room/change")
+    public String changeRoom(@RequestParam Long id, Map<String, Object> model, @RequestParam int pg) {
+        final Optional<Room> roomOptional = roomService.getById(id);
+        model.put("categories", Category.values());
+        model.put("room", roomOptional.get());
+        model.put("pg", pg);
+        return "changeRoom";
+    }
+
+    @GetMapping("/admin/user/change")
+    public String changeUser(@RequestParam Long id, Map<String, Object> model, @RequestParam int pg) {
+        final Optional<User> userOptional = userService.getById(id);
+        userService.update(userOptional.get());
+        log.info("Was change status of User '{}'", userOptional.get().getLogin());
+        return "redirect:/admin/user?pg=" + pg;
+    }
+
+
+    @GetMapping("/admin/user")
+    public String getUserPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        List<User> userList = userService.getAll();
+
+        userList = userService.doPagination(POSITION_ON_PAGE, page, userList);
+        model.put("users", userList);
+        model.put("action", "user");
+        return "adminPage";
+    }
+
+    @GetMapping("/admin/order")
+    public String getOrderPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        List<Order> orderList = orderService.getAll();
+        model.put("orders", orderList);
+        model.put("action", "order");
+        return "adminPage";
+    }
+
+
+
+    private int initPageAttributes(Map<String, Object> model, HttpServletRequest request) {
+        int page = 1;
+        if (request.getParameter("pg") != null) {
+            page = Integer.parseInt(request.getParameter("pg"));
+        }
+        model.put("itemOnPage", POSITION_ON_PAGE);
+        model.put("pg", page);
+        model.put("userType", "admin");
+        return page;
+    }
 }

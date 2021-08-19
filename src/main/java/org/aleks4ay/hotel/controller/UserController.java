@@ -2,6 +2,7 @@ package org.aleks4ay.hotel.controller;
 
 import org.aleks4ay.hotel.model.Category;
 import org.aleks4ay.hotel.model.Room;
+import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.service.OrderService;
 import org.aleks4ay.hotel.service.RoomService;
 import org.aleks4ay.hotel.service.ScheduleService;
@@ -54,7 +55,7 @@ public class UserController {
         room.addSchedule(schedule);
 
         schedule.setRoom(room);
-        scheduleService.create(schedule);
+        scheduleService.save(schedule);
         System.out.println("after: " + room);*/
 
         System.out.println("It's worked");
@@ -64,16 +65,13 @@ public class UserController {
 
 
     @GetMapping("/user/room")
-    public String getRooms(HttpServletRequest request) {
+    public String getRooms(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+
         List<Room> roomList = roomService.getRooms(request);
-        int page = 1;
-        if (request.getAttribute("pg") != null) {
-            page = (int) request.getAttribute("pg");
-        }
         roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
-        request.setAttribute("rooms", roomList);
-        request.setAttribute("itemOnPage", POSITION_ON_PAGE);
-        request.setAttribute("pg", page);
+        model.put("rooms", roomList);
+        model.put("action", "room");
         return "userPageRoom";
     }
 
@@ -213,7 +211,7 @@ public class UserController {
 
         int guests = Integer.parseInt(request.getParameter("field1"));
         Category category = Category.valueOf(request.getParameter("field2"));
-        new ProposalService().create(new Proposal(dateStart, dateEnd, guests, category, user));
+        new ProposalService().save(new Proposal(dateStart, dateEnd, guests, category, user));
         return "redirect:/user?action=account&ap=proposal";
     }
 
@@ -227,7 +225,7 @@ public class UserController {
         LocalDate dateEnd = LocalDate.parse(dateEndString, formatter);
 
         long room_id = Long.parseLong(request.getParameter("id"));
-        new OrderService().create(room_id, dateStart, dateEnd, user);
+        new OrderService().save(room_id, dateStart, dateEnd, user);
         return "redirect:/user?action=account&ap=order";
     }
 
@@ -269,5 +267,26 @@ public class UserController {
         request.setAttribute("departure", dateEnd);
         return "WEB-INF/jsp/userPage.jsp";
     }*/
+
+    private int initPageAttributes(Map<String, Object> model, HttpServletRequest request) {
+        int page = 1;
+        if (request.getParameter("pg") != null) {
+            page = Integer.parseInt(request.getParameter("pg"));
+        }
+        model.put("itemOnPage", POSITION_ON_PAGE);
+        model.put("pg", page);
+
+        Object userObject = request.getRemoteUser();
+
+        String userType;
+        if(userObject == null) {
+            userType = "guest";
+        } else {
+            userType = "user";
+        }
+        model.put("userType", userType);
+
+        return page;
+    }
 
 }

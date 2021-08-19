@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.exception.NotFoundException;
 import org.aleks4ay.hotel.model.Category;
 import org.aleks4ay.hotel.model.Room;
 import org.aleks4ay.hotel.repository.RoomRepo;
@@ -12,16 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static java.util.Comparator.comparing;
+
 @Service
 @Transactional(readOnly = true)
 public class RoomService {
-    private RoomRepo roomRepo;
-    private static final Logger log = LogManager.getLogger(RoomService.class);
-
     @Autowired
-    public void setOrderRepository(RoomRepo roomRepo) {
-        this.roomRepo = roomRepo;
-    }
+    private RoomRepo roomRepo;
+
+    private static final Logger log = LogManager.getLogger(RoomService.class);
 
     public Optional<Room> getById(Long id) {
         return roomRepo.findById(id);
@@ -63,7 +63,10 @@ public class RoomService {
     }
 
     public List<Room> doPagination(int positionOnPage, int page, List<Room> entities) {
-        return new UtilService<Room>().doPagination(positionOnPage, page, entities);
+        UtilService utilService = new UtilService<Room>();
+        entities.sort(comparing(Room::getNumber));
+        List<Room> result = utilService.doPagination(positionOnPage, page, entities);
+        return result;
     }
 
 /*
@@ -73,18 +76,28 @@ public class RoomService {
         boolean result = roomDao.delete(id);
         ConnectionPool.closeConnection(conn);
         return result;
-    }*//*
-
-*//*    public Room update(Room room) {
-        Connection conn = ConnectionPool.getConnection();
-        RoomDao roomDao = new RoomDao(conn);
-        room = roomDao.update(room);
-        ConnectionPool.closeConnection(conn);
-        return room;
     }*/
 
     @Transactional
-    public Room create(Room room) {
+    public Room update(Room room) {
+        Optional<Room> optionalRoom = getById(room.getId());
+        if (!optionalRoom.isPresent()) {
+            throw new NotFoundException("Room with number: " + room.getNumber() + " not found");
+        }
+        Room roomFromDB = optionalRoom.get();
+        roomFromDB.setGuests(room.getGuests());
+        roomFromDB.setDescription(room.getDescription());
+        roomFromDB.setCategory(room.getCategory());
+        roomFromDB.setPrice(room.getPrice());
+        return roomRepo.save(roomFromDB);
+    }
+
+    public boolean checkNumber(int number) {
+        return roomRepo.findByNumber(number).isPresent();
+    }
+
+    @Transactional
+    public Room save(Room room) {
         return roomRepo.save(room);
     }
 

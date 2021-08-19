@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoomRepo extends CrudRepository<Room, Long> {
@@ -23,4 +24,5 @@ public interface RoomRepo extends CrudRepository<Room, Long> {
     List<Room> findAllByCategory(Category category);
     List<Room> findAllByGuests(Integer guests);
 
+    Optional<Room> findByNumber(int number);
 }

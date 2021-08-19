@@ -30,7 +30,7 @@ class UserRoleService {
         return result;
     }
 
-    public boolean create(long id, Role role) {
+    public boolean save(long id, Role role) {
         Connection conn = ConnectionPool.getConnection();
         UserRoleDao roleDao = new UserRoleDao(conn);
         boolean result =  roleDao.createRole(id, role);

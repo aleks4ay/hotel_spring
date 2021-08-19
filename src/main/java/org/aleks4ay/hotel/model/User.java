@@ -196,6 +196,17 @@ public class User implements UserDetails{
         return registered.format(formatter);
     }
 
+    public Role getMainRole() {
+        return isAdmin() ? Role.ROLE_ADMIN
+                : isManager() ? Role.ROLE_MANAGER
+                : isClient() ? Role.ROLE_USER
+                : Role.ROLE_GUEST;
+    }
+
+//    public String getMainRoleAsString() {
+//        return getMainRole().toString();
+//    }
+
     @Override
     public String toString() {
         return "User{" +

@@ -1,10 +1,10 @@
 package org.aleks4ay.hotel.service;
 
 import org.aleks4ay.hotel.exception.AlreadyException;
+import org.aleks4ay.hotel.exception.NotFoundException;
 import org.aleks4ay.hotel.model.Role;
 import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.repository.UserRepo;
-import org.aleks4ay.hotel.utils.Encrypt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static java.util.Comparator.comparing;
 
 @Service
 @Transactional(readOnly = true)
@@ -79,5 +80,24 @@ public class UserService implements UserDetailsService{
             throw new UsernameNotFoundException("User not found");
         }
         return userOptional.get();
+    }
+
+    public List<User> doPagination(int positionOnPage, int page, List<User> entities) {
+        UtilService utilService = new UtilService<User>();
+        entities.sort(comparing(User::getLogin));
+        List<User> result = utilService.doPagination(positionOnPage, page, entities);
+        return result;
+    }
+
+
+    @Transactional
+    public User update(User user) {
+        Optional<User> optionalUser = getById(user.getId());
+        if (!optionalUser.isPresent()) {
+            throw new NotFoundException("User with login: " + user.getLogin() + " not found");
+        }
+        User userFromDB = optionalUser.get();
+        userFromDB.setActive(!user.isActive());
+        return userRepo.save(userFromDB);
     }
 }

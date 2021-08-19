@@ -38,10 +38,10 @@
                     <a class="nav-link gap-item" th:href="@{/user/account/order}"> [[#{account}]] </a>
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
-                    <a class="nav-link gap-item" th:href="@{/admin}"> [[#{admin}]] </a>
+                    <a class="nav-link gap-item" th:href="@{/admin/room}"> [[#{admin}]] </a>
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
-                    <a class="nav-link gap-item" th:href="@{/manager}"> [[#{manager}]] </a>
+                    <a class="nav-link gap-item" th:href="@{/manager/proposal}"> [[#{manager}]] </a>
                 </li>
             </ul>
 
@@ -49,6 +49,13 @@
                 <li>
                     <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.remoteUser}"
                            th:text="${' '+#httpServletRequest.remoteUser+' '}">
+                    </label>
+                    <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.isUserInRole('ADMIN')}"
+                           th:text="${'(ADMIN)'}">
+                    </label>
+                    <label style="color: rgba(60, 189, 234, 0.54)"
+                           th:if="${#httpServletRequest.isUserInRole('USER') and not #httpServletRequest.isUserInRole('ADMIN')}"
+                           th:text="${'(USER)'}">
                     </label>
                     <label style="color: rgba(60, 189, 234, 0.54)"
                            th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}">
@@ -79,48 +86,33 @@
                     <form th:action="@{/logout}" method="post">
                         <input type="submit" th:value="#{logoutNow}" class="btn btn-outline-success my-2 my-sm-0"/>
                     </form>
-                    <!--<a class="nav-link" th:href="@{/logout}" th:text="#{logoutNow}">   </a>-->
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
-                    <a class="nav-link" href="login" th:text="#{loginNow}">  </a>
+                    <a class="nav-link" th:href="@{/login}" th:text="#{loginNow}">  </a>
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
-                    <a class="nav-link" href="registration" th:text="#{registration}"> </a>
+                    <a class="nav-link" th:href="@{/registration}" th:text="#{registration}"> </a>
                 </li>
 
-
-
-<!--                <div th:if="${#httpServletRequest.remoteUser == Null}">
-                    <form th:action="@{/login}" method="get">
-                        <input type="submit" th:value="#{loginNow}" class="btn btn-outline-success my-2 my-sm-0"/>
-                    </form>
-                </div>
-                <div th:if="${#httpServletRequest.remoteUser}">
-                    <form th:action="@{/logout}" method="post">
-                        <input type="submit" th:value="#{logoutNow}" class="btn btn-outline-success my-2 my-sm-0"/>
-                    </form>
-                </div>
-                <div th:if="${#httpServletRequest.remoteUser == Null}">
-                    <form th:action="@{/registration}" method="get">
-                        <input type="submit" th:value="#{registration}" class="btn btn-outline-success my-2 my-sm-0"/>
-                    </form>
-                </div>-->
-
-
-<!--                <li class="nav-item" th:if="${#httpServletRequest.remoteUser != Null}">
-                    <a class="nav-link" th:href="@{/logout}" th:text="#{logoutNow}">   </a>
-                </li>
-
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
-                    <a class="nav-link" href="login" th:text="#{loginNow}">  </a>
-                </li>
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
-                    <a class="nav-link" href="registration" th:text="#{registration}"> </a>
-                </li>-->
             </ul>
         </div>
     </nav>
 </div>
+
+
+<ul th:fragment="pagination" class="pagination"
+    th:with="command=${userType == 'guest' ? 'user' : userType}" >
+    <li class="page-item ${pg == 1 ? 'active' : ''}">
+        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=1'}">1</a>
+    </li>
+    <li class="page-item ${pg == 2 ? 'active' : ''}">
+        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=2'}">2</a>
+    </li>
+    <li class="page-item ${pg == 3 ? 'active' : ''}">
+        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=3'}">3</a>
+    </li>
+</ul>
+
 
 <div th:fragment="footer">
     <br>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:insert="~{fragments/header :: head}"/>
+
+<body>
+    Request from ${pageContext.errorData.requestURI} is failed
+    <br/>
+    Servlet name or type: ${pageContext.errorData.servletName}
+    <br/>
+    Status code: ${pageContext.errorData.statusCode}
+    <br/>
+    Exception: ${pageContext.errorData.throwable}
+</body>
+</html>

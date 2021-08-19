@@ -57,7 +57,7 @@ public class OrderController {
         room.addSchedule(schedule);
 
         schedule.setRoom(room);
-        scheduleService.create(schedule);
+        scheduleService.save(schedule);
         System.out.println("after: " + room);*/
 
         System.out.println("It's worked");

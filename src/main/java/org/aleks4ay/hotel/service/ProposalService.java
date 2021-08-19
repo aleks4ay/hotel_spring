@@ -54,11 +54,11 @@ public class ProposalService {
     }
 
 
-    public Optional<Proposal> create(Proposal proposal) {
+    public Optional<Proposal> save(Proposal proposal) {
         Connection conn = ConnectionPool.getConnection();
         ProposalDao proposalDao = new ProposalDao(conn);
         proposal.setStatus(Proposal.Status.NEW);
-        Optional<Proposal> proposalOptional = proposalDao.create(proposal);
+        Optional<Proposal> proposalOptional = proposalDao.save(proposal);
         ConnectionPool.closeConnection(conn);
         return proposalOptional;
     }
