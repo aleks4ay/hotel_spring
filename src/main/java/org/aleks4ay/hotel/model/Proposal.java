@@ -1,13 +1,19 @@
 package org.aleks4ay.hotel.model;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
+@Entity
+@Table(name = "proposal")
 public class Proposal {
+    @Id
+    @GeneratedValue
     private long id;
+
     private LocalDateTime registered = LocalDateTime.now();
     private LocalDate arrival;
     private LocalDate departure;
@@ -16,6 +22,8 @@ public class Proposal {
     private Category category;
     private Status status;
 
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Proposal() {

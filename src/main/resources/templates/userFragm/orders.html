@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>Form items</title>
+</head>
+<body>
+
+
+<!-- *******************  U S E R   ORDERS  *********************  -->
+<div th:fragment="orders">
+    <h2> [[#{adm_act_3}]] </h2>
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col"> [[#{n}]] </th>
+            <th scope="col"> [[#{roomNumber}]] </th>
+            <th scope="col"> [[#{category}]] </th>
+            <th scope="col"> [[#{arrival}]] </th>
+            <th scope="col"> [[#{departure}]] </th>
+            <th scope="col"> [[#{guests}]] </th>
+            <th scope="col"> [[#{description}]] </th>
+            <th scope="col"> [[#{data_reg}]] </th>
+            <th scope="col"> [[#{price}]] </th>
+            <th scope="col"> [[#{cost_2}]] </th>
+            <th scope="col"> [[#{detail}]] </th>
+            <!--<th scope="col"> [[#{act_4}]] </th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr  th:each="order,step : ${orders}">
+            <td scope="row">
+                <input type="hidden" value="#" th:value="${order.id}"/>
+                <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+            </td>
+            <td th:text="${order.schedule.room.number}"></td>
+            <td th:text="${order.schedule.room.category.title}"></td>
+            <td th:text="${order.schedule.arrival}"></td>
+            <td th:text="${order.schedule.departure}"></td>
+            <td th:text="${order.schedule.room.guests}"></td>
+            <td th:text="${order.schedule.room.description}"></td>
+            <td th:text="${order.registered}"></td>
+            <td th:text="${order.correctPrice}"></td>
+            <td th:text="${order.cost}"></td>
+            <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}+ '&pg=' + ${pg}"> [[#{detail}]] </a> </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

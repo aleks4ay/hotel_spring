@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>Form items</title>
+</head>
+<body>
+
+<!-- *******************  U S E R     MENU  *********************  -->
+<div th:fragment="menu" class="btn-group" style="width: 100%">
+    <button type="button" class="btn btn-primary btn-my-r selected"
+            th:onclick="@{'window.location=\'/user/account/order\''}">
+        <h5> [[#{adm_act_3}]] </h5>
+    </button>
+    <button type="button" class="btn btn-primary btn-my-r selected"
+            th:onclick="@{'window.location=\'/user/account/proposal\''}">
+        <h5> [[#{proposal}]] </h5>
+    </button>
+    <button type="button" class="btn btn-primary btn-my-r selected"
+            th:onclick="@{'window.location=\'/user/account/bill\''}">
+        <h5> [[#{bill}]] </h5>
+    </button>
+</div>
+
+
+
+</body>
+</html>

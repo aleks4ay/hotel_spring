@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
+
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
@@ -45,18 +47,6 @@ public class OrderService {
         this.scheduleService = scheduleService;
     }
 
-    public static void main(String[] args) {
-/*
-        OrderService orderService = new OrderService();
-        final Optional<User> user1 = orderService.userService.getByLogin("12");
-        final Optional<Order> order = orderService.getById(1000006L);
-        System.out.println(order);
-        List<Order> orders = orderService.getAll();
-        orders.forEach(System.out::println);
-*/
-
-
-    }
 
     public Optional<Order> getById(Long id) {
         Optional<Order> optional = orderRepo.findById(id);
@@ -101,9 +91,9 @@ public class OrderService {
     }*/
 
     @Transactional
-    public Optional<Order> create(long room_id, LocalDate dateStart, LocalDate dateEnd, User user) {
+    public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
 
-        Order builtOrder = buildOrder(room_id, dateStart, dateEnd, user);
+        Order builtOrder = buildOrder(roomNumber, dateStart, dateEnd, user);
 
         if (scheduleService.checkRoom(builtOrder.getSchedule())) {
             return Optional.of(orderRepo.save(builtOrder));
@@ -119,13 +109,12 @@ public class OrderService {
         return result;
     }*/
 
-    private Order buildOrder(long room_id, LocalDate dateStart, LocalDate dateEnd, User user) {
+    private Order buildOrder(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
 
-        Room room = roomService.getById(room_id).orElse(null);
+        Room room = roomService.getByNumber(roomNumber).orElse(null);
 
         Order tempOrder = new Order();
         tempOrder.setRegistered(LocalDateTime.now());
-//        user.addOrder(tempOrder);
         Order.Status orderStatus = Order.Status.CONFIRMED;
         Schedule.RoomStatus roomStatus = Schedule.RoomStatus.BOOKED;
         if (user.isManager()) {
@@ -134,11 +123,17 @@ public class OrderService {
         }
         Schedule schedule = new Schedule(dateStart, dateEnd, roomStatus, room);
 
-//        tempOrder.setRoom(room);
         tempOrder.setSchedule(schedule);
         tempOrder.setUser(user);
         user.addOrder(tempOrder);
         tempOrder.setStatus(orderStatus);
         return tempOrder;
+    }
+
+    public List<Order> doPagination(int positionOnPage, int page, List<Order> entities) {
+        UtilService utilService = new UtilService<Order>();
+        entities.sort(comparing(Order::getId));
+        List<Order> result = utilService.doPagination(positionOnPage, page, entities);
+        return result;
     }
 }

@@ -103,13 +103,13 @@
 <ul th:fragment="pagination" class="pagination"
     th:with="command=${userType == 'guest' ? 'user' : userType}" >
     <li class="page-item ${pg == 1 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=1'}">1</a>
+        <a class="page-link" th:href="${'/' + userType + '/' + action + '?pg=1'}">1</a>
     </li>
     <li class="page-item ${pg == 2 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=2'}">2</a>
+        <a class="page-link" th:href="${'/' + userType + '/' + action + '?pg=2'}">2</a>
     </li>
     <li class="page-item ${pg == 3 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=3'}">3</a>
+        <a class="page-link" th:href="${'/' + userType + '/' + action + '?pg=3'}">3</a>
     </li>
 </ul>
 

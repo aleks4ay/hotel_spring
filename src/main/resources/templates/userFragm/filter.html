@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>Form items</title>
+</head>
+<body>
+
+
+
+<form th:fragment="filters" class="sticky rounded-lg shadow p-4 mb-4" method="post" action="/user?action=filter"
+       style="background-color: rgba(96, 162, 218, 0.2);">
+
+    <h3> [[#{filters}]] </h3>
+    <div class="mb-3">
+        <label for="field1" class="form-label"> [[#{guests}]] </label>
+
+
+        <select id="field1" name="filter_guests" class="col-md-12 form-control">
+            <option value="1" > 1 </option>
+            <option value="2" > 2 </option>
+            <option value="3" > 3 </option>
+            <option value="4" > 4 </option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="field2" class="form-label"> [[#{category}]] </label>
+
+
+        <select id="field2" name="filter_category" class="col-md-12 form-control">
+            <option value="">Select Category</option>
+            <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
+        </select>
+    </div>
+
+    <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
+        <p th:if="${category}" th:text="${#category+': '+category}"> </p>
+        <p th:if="${guests}" th:text="${#guests+': '+guests}"> </p>
+
+        <button type="submit" class="btn btn-outline-success" name="filter" value="applyFilter"> [[#{filterEnter}]] </button>
+        <hr/>
+        <button type="submit" class="btn btn-outline-success" name="filter" value="filterCansel"> [[#{filterCansel}]] </button>
+    </div>
+</form>
+
+
+
+
+</body>
+</html>

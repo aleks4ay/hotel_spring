@@ -1,26 +1,29 @@
 package org.aleks4ay.hotel.controller;
 
-import org.aleks4ay.hotel.model.Category;
-import org.aleks4ay.hotel.model.Room;
-import org.aleks4ay.hotel.model.User;
-import org.aleks4ay.hotel.service.OrderService;
-import org.aleks4ay.hotel.service.RoomService;
-import org.aleks4ay.hotel.service.ScheduleService;
-import org.aleks4ay.hotel.service.UserService;
+import org.aleks4ay.hotel.exception.NotFoundException;
+import org.aleks4ay.hotel.model.*;
+import org.aleks4ay.hotel.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
+//@RequestMapping("/user")
 public class UserController {
     private static final int POSITION_ON_PAGE = 5;
 
 
+    @Autowired
+    private ProposalService proposalService;
     @Autowired
     private ScheduleService scheduleService;
     @Autowired
@@ -30,49 +33,100 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-
     @GetMapping("/user")
     public String getUserPage(Map<String, Object> model) {
-
-
-/*        OrderService orderService = new OrderService();
-        final Optional<User> user1 = orderService.userService.getByLogin("12");
-        final Optional<Order> order = orderService.getById(1000006L);
-        System.out.println(order);
-        List<Order> orders = orderService.getAll();
-        orders.forEach(System.out::println);*/
-
-
-//        Room room = roomService.getById(20L).get();
-//        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 13), LocalDate.of(2021, 8, 18), Schedule.RoomStatus.BOOKED, room);
-//        boolean b = scheduleService.checkRoom(schedule);
-//        System.out.println("b=" + b);
-
-/*        Room room = new Room(201, Category.SUITE, 2, "Комната с видом на море", 2200.0);
-        System.out.println("before:" + room);
-        Schedule schedule = new Schedule(LocalDate.of(2021, 8, 11), LocalDate.of(2021, 8, 13), Schedule.RoomStatus.BOOKED, room);
-        room.addSchedule(schedule);
-
-        schedule.setRoom(room);
-        scheduleService.save(schedule);
-        System.out.println("after: " + room);*/
-
-        System.out.println("It's worked");
-
-        return "index";
+        return "redirect:/user/room";
     }
 
 
     @GetMapping("/user/room")
     public String getRooms(Map<String, Object> model, HttpServletRequest request) {
         int page = initPageAttributes(model, request);
-
+        model.put("categories", Category.values());
+        HttpSession session = request.getSession();
         List<Room> roomList = roomService.getRooms(request);
         roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
         model.put("rooms", roomList);
         model.put("action", "room");
+        model.put("arrival", session.getAttribute("arrival"));
+        model.put("departure", session.getAttribute("departure"));
         return "userPageRoom";
+    }
+
+    @PostMapping("/user/room/date")
+    public String setDate(Map<String, Object> model, HttpServletRequest request) {
+        initPageAttributes(model, request);
+        parseDate(model, request);
+        System.out.println("arrival=" + model.get("arrival"));
+        return getRooms(model, request);
+    }
+
+    @GetMapping("/user/booking")
+    private String doBooking(@RequestParam Long id, Map<String, Object> model, HttpServletRequest request) {
+        if (request.getRemoteUser() == null) {
+            return "index";
+        }
+        Optional<Room> roomOptional = roomService.getById(id);
+        final OrderDto orderDto = userService.createOrderDto(request, roomOptional.get());
+
+        model.put("orderDto", orderDto);
+        return "newOrder";
+    }
+
+    @PostMapping("/user/newOrder")
+    private String saveNewOrder(@RequestParam int number, Map<String, Object> model, HttpServletRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate arrival = LocalDate.parse(request.getParameter("arrival"), formatter);
+        LocalDate departure = LocalDate.parse(request.getParameter("departure"), formatter);
+        Optional<User> userOptional = userService.getByLogin(request.getRemoteUser());
+        orderService.create(number, arrival, departure, userOptional.get());
+        return "redirect:/user/account/order";
+    }
+
+
+    @GetMapping("user/account/order")
+    private String getOrderPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
+        List<Order> orderList = orderService.getAllByUser(user);
+//        orderList = orderService.doPagination(POSITION_ON_PAGE, page, orderList);
+        user.setOrders(orderList);
+
+        model.put("orders", orderList);
+        model.put("action", "order");
+        return "userPage";
+    }
+
+    @GetMapping("user/account/proposal")
+    private String getProposalPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
+        List<Proposal> proposalList = proposalService.getAllByUser(user);
+
+        model.put("proposals", proposalList);
+        model.put("action", "proposal");
+        return "userPage";
+    }
+
+    @GetMapping("user/account/bill")
+    private String getBillPage(Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
+        User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
+        model.put("action", "bill");
+        model.put("bill", user.getBill());
+        return "userPage";
+    }
+
+
+    @PostMapping("/user/account/changeBill")
+    private String doChangeBill(@RequestParam int addBill, HttpServletRequest request) {
+//        int page = initPageAttributes(model, request);
+        User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
+
+//        int number = Integer.parseInt(request.getParameter("addBill"));
+        user.setBill(user.getBill() + addBill);
+        userService.update(user);
+        return "redirect:/user/account/bill";
     }
 
 
@@ -133,12 +187,7 @@ public class UserController {
     }
 
 
-    private String doChangeBill(HttpServletRequest request, User user) {
-        int number = Integer.parseInt(request.getParameter("addBill"));
-        user.setBill(user.getBill() + number);
-        new UserService().update(user);
-        return "redirect:/user?action=account&ap=bill";
-    }
+
 
 
 
@@ -171,31 +220,6 @@ public class UserController {
     }
 
 
-    private String doAccount(HttpServletRequest request, User user) {
-        String actionPage = request.getParameter("ap");
-        //user?action=account&ap=
-        if (actionPage == null) {
-            actionPage = "order";
-        }
-        //user?action=account&ap=order
-        if (actionPage.equalsIgnoreCase("order")) {
-            List<Order> orderList = new OrderService().getAllByUser(user);
-            user.setOrders(orderList);
-            request.setAttribute("orders", orderList);
-            //user?action=account&ap=proposal
-        } else if (actionPage.equalsIgnoreCase("proposal")) {
-            List<Proposal> proposalList = new ProposalService().getAllByUser(user);
-            request.setAttribute("proposals", proposalList);
-            //user?action=account&ap=bill
-        } else if (actionPage.equalsIgnoreCase("bill")) {
-            request.setAttribute("bill", user.getBill());
-
-        }
-        request.setAttribute("ap", actionPage);
-        return "WEB-INF/jsp/userPage.jsp";
-    }
-
-
     private String doNewProposal(HttpServletRequest request, User user) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStartString = request.getParameter("arrival");
@@ -216,57 +240,8 @@ public class UserController {
     }
 
 
-    private String doNewOrder(HttpServletRequest request, User user) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dateStartString = request.getParameter("date_arrival");
-        String dateEndString = request.getParameter("date_departure");
-        LocalDate dateStart = LocalDate.parse(dateStartString, formatter);
-        LocalDate dateEnd = LocalDate.parse(dateEndString, formatter);
-
-        long room_id = Long.parseLong(request.getParameter("id"));
-        new OrderService().save(room_id, dateStart, dateEnd, user);
-        return "redirect:/user?action=account&ap=order";
-    }
-
-
-    private String doBooking(HttpServletRequest request) {
-//        System.out.println("Booking");
-        User user = (User) request.getSession().getAttribute("user");
-        HttpSession session = request.getSession();
-//        request.setAttribute("action", "booking");
-        long id = Long.parseLong(request.getParameter("id"));
-        Order order = new Order();
-        order.setUser(user);
-        order.setRoom(new RoomService().getById(id).get());
-
-        LocalDate dateStart = null;
-        LocalDate dateEnd = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if (session.getAttribute("arrival") != null) {
-            dateStart = (LocalDate) session.getAttribute("arrival");
-        }
-        if (session.getAttribute("departure") != null) {
-            dateEnd = (LocalDate) session.getAttribute("departure");
-        }
-
-        if (dateStart == null) {
-            if (dateEnd == null) {
-                dateStart = LocalDate.now();
-                dateEnd = dateStart.plusDays(1);
-            } else {
-                dateStart = dateEnd.minusDays(1);
-            }
-        } else if (dateEnd == null) {
-            dateEnd = dateStart.plusDays(1);
-        }
-
-        request.setAttribute("order", order);
-
-        request.setAttribute("arrival", dateStart);
-        request.setAttribute("departure", dateEnd);
-        return "WEB-INF/jsp/userPage.jsp";
-    }*/
+*/
 
     private int initPageAttributes(Map<String, Object> model, HttpServletRequest request) {
         int page = 1;
@@ -289,4 +264,31 @@ public class UserController {
         return page;
     }
 
+
+
+    private void parseDate(Map<String, Object> model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String stringArrival = request.getParameter("arrival");
+        String stringDeparture = request.getParameter("departure");
+
+        LocalDate dateStart;
+        LocalDate dateEnd;
+
+        if (stringArrival != null && !stringArrival.isEmpty()) {
+            dateStart = LocalDate.parse(stringArrival, formatter);
+            model.put("arrival", dateStart);
+            session.setAttribute("arrival", dateStart);
+        } else {
+            model.put("arrival", session.getAttribute("arrival"));
+        }
+        if (stringDeparture != null && !stringDeparture.isEmpty()) {
+            dateEnd = LocalDate.parse(stringDeparture, formatter);
+            model.put("departure", dateEnd);
+            session.setAttribute("departure", dateEnd);
+        } else {
+            model.put("departure", session.getAttribute("departure"));
+        }
+    }
 }

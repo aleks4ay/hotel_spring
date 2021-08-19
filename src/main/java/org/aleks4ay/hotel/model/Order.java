@@ -93,8 +93,8 @@ public class Order {
         return "Order{" +
                 "id=" + id +
                 ", registered=" + registered +
-                ", arrival=" + schedule.getArrival() +
-                ", departure=" + schedule.getDeparture() +
+//                ", arrival=" + schedule.getArrival() +
+//                ", departure=" + schedule.getDeparture() +
                 ", correctPrice=" + correctPrice +
                 ", status=" + status +
 //                ", room=" + room.getNumber() +

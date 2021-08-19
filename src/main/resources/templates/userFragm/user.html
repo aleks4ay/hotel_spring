@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>Form items</title>
+</head>
+<body>
+
+<!-- *******************  U S E R   leftForm  *********************  -->
+<form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
+       style="height:700px; height: 350px; background-color: rgba(96, 162, 218, 0.2);">
+    <h4 th:if="${#httpServletRequest.remoteUser}" th:text="${#hello1+', '+#httpServletRequest.remoteUser}" ></h4>
+    <h4 th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}" />
+</form>
+
+
+<!-- *******************  U S E R   dateField  *********************  -->
+<form th:fragment="dateField" method="post" th:action="@{/user/room/date}" >
+    <div class="mb-3">
+        <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
+        <input type="date" class="form-control" id="dateStart"  name="arrival" th:value="${arrival}" />
+    </div>
+    <div class="mb-3">
+        <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
+        <input type="date" class="form-control" id="dateEnd" name="departure" th:value="${departure}" />
+    </div>
+    <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
+        <button type="submit" class="btn btn-outline-success" >  [[#{dateEnter}]]  </button>
+    </div>
+</form>
+
+
+<!-- *******************  U S E R   bill  *********************  -->
+<div th:fragment="bill">
+    <h2> [[#{bill}]] </h2>
+    <form  class="sticky rounded-lg shadow p-4 mb-4" method="post" th:action="@{/user/account/changeBill}"
+           style="background-color: rgba(96, 162, 218, 0.2);">
+        <h4> [[#{bill}]]: [[${bill}]] [[#{currency}]] </h4>
+        <div class="mb-3">
+            <label for="bill1" class="form-label"> [[#{sum}]]: </label>
+            <input type="number" class="form-control" id="bill1"  name="addBill" style="width: 40%"/>
+        </div>
+        <div >
+            <button type="submit" class="btn btn-outline-success" >  [[#{addBill}]] </button>
+        </div>
+    </form>
+</div>
+
+
+
+
+</body>
+</html>

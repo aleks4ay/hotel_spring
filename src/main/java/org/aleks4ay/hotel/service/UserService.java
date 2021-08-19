@@ -2,7 +2,9 @@ package org.aleks4ay.hotel.service;
 
 import org.aleks4ay.hotel.exception.AlreadyException;
 import org.aleks4ay.hotel.exception.NotFoundException;
+import org.aleks4ay.hotel.model.OrderDto;
 import org.aleks4ay.hotel.model.Role;
+import org.aleks4ay.hotel.model.Room;
 import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.repository.UserRepo;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -99,5 +104,31 @@ public class UserService implements UserDetailsService{
         User userFromDB = optionalUser.get();
         userFromDB.setActive(!user.isActive());
         return userRepo.save(userFromDB);
+    }
+
+    public OrderDto createOrderDto(HttpServletRequest request, Room room) {
+        HttpSession session = request.getSession();
+        LocalDate dateStart = null;
+        LocalDate dateEnd = null;
+        if (session.getAttribute("arrival") != null) {
+            dateStart = (LocalDate) session.getAttribute("arrival");
+        }
+        if (session.getAttribute("departure") != null) {
+            dateEnd = (LocalDate) session.getAttribute("departure");
+        }
+
+        if (dateStart == null) {
+            if (dateEnd == null) {
+                dateStart = LocalDate.now();
+                dateEnd = dateStart.plusDays(1);
+            } else {
+                dateStart = dateEnd.minusDays(1);
+            }
+        } else if (dateEnd == null) {
+            dateEnd = dateStart.plusDays(1);
+        }
+
+        return new OrderDto(room.getNumber(), room.getCategory(), room.getGuests(), room.getDescription(),
+                dateStart, dateEnd, room.getPrice());
     }
 }

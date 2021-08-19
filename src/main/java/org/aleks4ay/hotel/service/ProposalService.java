@@ -2,29 +2,31 @@ package org.aleks4ay.hotel.service;
 
 import org.aleks4ay.hotel.model.Proposal;
 import org.aleks4ay.hotel.model.User;
+import org.aleks4ay.hotel.repository.ProposalRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
 import java.util.*;
 
+@Service
+@Transactional(readOnly = true)
 public class ProposalService {
-    private UserService userService = new UserService();
+    @Autowired
+    private ProposalRepo proposalRepo;
 
-   /* public Optional<Proposal> getById(Long id) {
-        Connection conn = ConnectionPool.getConnection();
-        ProposalDao proposalDao = new ProposalDao(conn);
-        Optional<Proposal> proposalOptional = proposalDao.findById(id);
-        if (proposalOptional.isPresent()) {
+    public Optional<Proposal> getById(Long id) {
+        Optional<Proposal> proposalOptional = proposalRepo.findById(id);
+/*        if (proposalOptional.isPresent()) {
             Proposal proposal = proposalOptional.get();
             proposal.setUser(userService.getById(proposal.getUser().getId()).orElse(null));
-        }
-        ConnectionPool.closeConnection(conn);
+        }*/
         return proposalOptional;
     }
 
     public List<Proposal> getAll() {
-        Connection conn = ConnectionPool.getConnection();
-        ProposalDao proposalDao = new ProposalDao(conn);
-        List<Proposal> proposals = proposalDao.findAll();
+        List<Proposal> proposals = (List<Proposal>) proposalRepo.findAll();
+/*
         Map<Long, User> users = new HashMap<>();
 
         for (User u : userService.getAll()) {
@@ -34,35 +36,29 @@ public class ProposalService {
         for (Proposal p : proposals) {
             p.setUser(users.get(p.getUser().getId()));
         }
-        ConnectionPool.closeConnection(conn);
+*/
         return proposals;
     }
 
     public List<Proposal> getAllByUser(User user) {
-        Connection conn = ConnectionPool.getConnection();
-        ProposalDao proposalDao = new ProposalDao(conn);
-        List<Proposal> orders = new ArrayList<>();
+
+        /*List<Proposal> orders = new ArrayList<>();
 
         for (Proposal o : proposalDao.findAll()) {
             if (o.getUser().getId() == user.getId()) {
                 o.setUser(user);
                 orders.add(o);
             }
-        }
-        ConnectionPool.closeConnection(conn);
-        return orders;
+        }*/
+        return proposalRepo.findAllByUser(user);
     }
 
-
+    @Transactional
     public Optional<Proposal> save(Proposal proposal) {
-        Connection conn = ConnectionPool.getConnection();
-        ProposalDao proposalDao = new ProposalDao(conn);
         proposal.setStatus(Proposal.Status.NEW);
-        Optional<Proposal> proposalOptional = proposalDao.save(proposal);
-        ConnectionPool.closeConnection(conn);
-        return proposalOptional;
+        return Optional.of(proposalRepo.save(proposal));
     }
-*//*
+/*
     public List<Proposal> getAll(int positionOnPage, int page) {
         Connection conn = ConnectionPool.getConnection();
         ProposalDao proposalDao = new ProposalDao(conn);

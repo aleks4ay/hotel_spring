@@ -17,7 +17,6 @@ public class User implements UserDetails{
     @GeneratedValue
     private Long id;
 
-
     @Column(unique = true)
     private String login;
     private String name;
@@ -35,6 +34,11 @@ public class User implements UserDetails{
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Proposal> proposals = new ArrayList<>();
+
+
 
     public User() {
     }
@@ -177,6 +181,19 @@ public class User implements UserDetails{
     public void addOrder(Order order) {
         this.orders.add(order);
         order.setUser(this);
+    }
+
+    public List<Proposal> getProposals() {
+        return proposals;
+    }
+
+    public void setProposals(List<Proposal> proposals) {
+        this.proposals = proposals;
+    }
+
+    public void addProposal(Proposal proposal) {
+        this.proposals.add(proposal);
+        proposal.setUser(this);
     }
 
     public boolean isAdmin() {

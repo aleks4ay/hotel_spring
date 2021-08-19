@@ -119,6 +119,8 @@ public class AdminController {
     public String getOrderPage(Map<String, Object> model, HttpServletRequest request) {
         int page = initPageAttributes(model, request);
         List<Order> orderList = orderService.getAll();
+
+        orderList = orderService.doPagination(POSITION_ON_PAGE, page, orderList);
         model.put("orders", orderList);
         model.put("action", "order");
         return "adminPage";

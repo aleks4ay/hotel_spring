@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -95,5 +98,12 @@ public class ScheduleService{
 
     public List<Schedule> getScheduleByRoomId(long roomId) {
         return scheduleRepo.findAllByRoomId(roomId);
+    }
+
+    public Schedule create(String arrivalString, String departureString, Room room) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate arrival = LocalDate.parse(arrivalString, formatter);
+        LocalDate departure = LocalDate.parse(departureString, formatter);
+        return new Schedule(arrival, departure, Schedule.RoomStatus.RESERVED, room);
     }
 }

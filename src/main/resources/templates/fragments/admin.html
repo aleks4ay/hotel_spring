@@ -124,12 +124,12 @@
             </td>
             <td th:text="${order.user.name}"></td>
             <td th:text="${order.user.surname}"></td>
-            <td th:text="${order.room.number}"></td>
-            <td th:text="${order.room.category.title}"></td>
+            <td th:text="${order.schedule.room.number}"></td>
+            <td th:text="${order.schedule.room.category.title}"></td>
             <td th:text="${order.schedule.arrival}"></td>
             <td th:text="${order.schedule.departure}"></td>
-            <td th:text="${order.room.guests}"></td>
-            <td th:text="${order.room.description}"></td>
+            <td th:text="${order.schedule.room.guests}"></td>
+            <td th:text="${order.schedule.room.description}"></td>
             <td th:text="${order.registered}"></td>
             <td th:text="${order.correctPrice}"></td>
             <!--<td> <a href="#" th:href="'/admin/order/change?id=' + ${user.id}+ '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>-->

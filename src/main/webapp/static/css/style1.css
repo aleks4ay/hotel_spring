@@ -1,0 +1,87 @@
+.header_container {
+  margin: 0;
+      padding: 0;
+      display: table;
+      width: 100%; 
+      /*background-image: url(/static/img/header.jpg);*/
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 300px;  /* Высота шапки */
+}
+
+.btn-my-r {
+    display: inline-block;
+    color: #3b6696;
+    font-weight: bold;
+    text-decoration: none;
+    background: #eee;
+    margin: 0 2px 6px 0;
+    padding: 4px 5px;
+    font-size: 15px;
+    line-height: 17px;
+    border: solid 2px #3b6696;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.gap-item {
+    margin: 0px 15px;
+    border-radius: 5px;
+    border:  solid 1px #d54d38;
+}
+
+.hello_1 {
+    height: 1200px;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+
+}
+
+/*
+.sticky {
+    position: sticky;
+    top: 80px;
+    padding: 10px;
+}*/
+.inner_logo {
+    margin-left: auto;
+    margin-right: auto;
+    width: calc(100% - 40px);
+    padding: 44px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 2px 6px rgb(0 0 0);
+    -moz-box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    box-shadow: 0 2px 6px rgb(0 0 0);
+    min-height: 338px;
+    overflow: hidden;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.middle { /* vertical align */
+    /*    margin: 0;
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);*/
+}
+
+body {
+    background: rgba(35, 35, 104, 0.09);
+}
+
+.center1 {
+    width: 420px;
+    /*margin: 0;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /*margin-right: -50%;*/
+    transform: translate(-50%, -50%)
+}
+
+.msg-danger {
+    color: #d54d38;
+}

@@ -10,7 +10,7 @@
     <div class="row">
 
         <div class="col-sm-2">
-            <div th:insert="~{fragments/forms :: filters}"> </div>
+            <div th:insert="~{userFragm/filter :: filters}"> </div>
         </div>
 
         <div class="col-sm-8">
@@ -18,7 +18,7 @@
             <div>
                 <h2> [[#{adm_act_2}]]  </h2>
 
-                <div th:insert="~{fragments/forms :: dateField}"> </div>
+                <div th:insert="~{userFragm/user :: dateField}"> </div>
 
                 <table class="table">
                     <thead class="thead-light">
@@ -42,12 +42,10 @@
                         <td th:text="${room.guests}"></td>
                         <td th:text="${room.description}"></td>
                         <td th:text="${room.price}"></td>
-                        <td th:test="${#httpServletRequest.remoteUser != Null}">
-                            <a href="#" th:href="'/user/booking?id=' + ${room.id}"> [[#{act_2}]] </a>
+                        <td th:if="${#httpServletRequest.remoteUser}">
+                            <a href="#" th:href="'/user/booking?id=' + ${room.id}" th:text="#{act_2}"> </a>
                         </td>
-                        <td th:test="${#httpServletRequest.remoteUser == Null}">
-                            [[#{act_2}]]
-                        </td>
+                        <td th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{act_2}"> </td>
                     </tr>
                     </tbody>
                 </table>
@@ -61,7 +59,8 @@
 
 
         <div class="col-sm-2">
-            <!--<div th:if="${#httpServletRequest.isUserInRole('USER')}" th:insert="~{fragments/header :: newProposal}"> </div>-->
+            <div th:if="${#httpServletRequest.isUserInRole('USER')}"
+                 th:insert="~{userFragm/newProposal :: newProposal}"> </div>
         </div>
     </div>
 </div>

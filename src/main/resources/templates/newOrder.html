@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-3">
+
+        </div>
+
+
+        <div class="col-sm-6">
+            <form method="post" th:action="@{/user/newOrder}" >
+                <h2> [[#{blank}]]: </h2>
+                <div>
+                    <div class="mb-3">
+                        <label for="date3" class="form-label"> [[#{arrival}]]: </label>
+                        <input type="date" class="form-control" id="date3"  name="arrival" th:value="${orderDto.arrival}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date4" class="form-label"> [[#{departure}]]: </label>
+                        <input type="date" class="form-control" id="date4" name="departure" th:value="${orderDto.departure}"/>
+                    </div>
+                    <input type="hidden" th:value="${orderDto.number}" name="number">
+
+                    <p>[[#{roomNumber}]]: [[${orderDto.number}]]</p>
+                    <p>[[#{category}]]: [[${orderDto.category}]]</p>
+                    <p>[[#{guestsQuantity}]]: [[${orderDto.guests}]]</p>
+                    <p>[[#{description}]]: [[${orderDto.description}]]</p>
+                    <h3> [[#{cost}]]: [[${orderDto.cost}]] [[#{currency}]] </h3>
+                </div>
+
+                <div class="btn-group" style="width: 100%">
+                    <input type="submit" class="btn btn-primary btn-my-r" th:value="#{act_3}"> </input>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-sm-3">
+
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>
