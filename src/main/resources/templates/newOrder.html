@@ -17,6 +17,14 @@
         <div class="col-sm-6">
             <form method="post" th:action="@{/user/newOrder}" >
                 <h2> [[#{blank}]]: </h2>
+                <h3 th:if="${roomOccupiedMessage}" class="text-danger" th:text="#{roomOccupiedMessage}"></h3>
+
+                <button  th:if="${roomOccupiedMessage}" type="button" class="btn btn-primary btn-my-r selected"
+                        th:onclick="@{'window.location=\'/user/room\''}">
+                    <h5> [[#{anotherRoom}]] </h5>
+                </button>
+
+
                 <div>
                     <div class="mb-3">
                         <label for="date3" class="form-label"> [[#{arrival}]]: </label>

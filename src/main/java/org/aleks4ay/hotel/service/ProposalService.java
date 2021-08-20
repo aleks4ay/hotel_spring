@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.model.Category;
 import org.aleks4ay.hotel.model.Proposal;
 import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.repository.ProposalRepo;
@@ -7,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -54,8 +58,11 @@ public class ProposalService {
     }
 
     @Transactional
-    public Optional<Proposal> save(Proposal proposal) {
+    public Optional<Proposal> save(LocalDate arrival, LocalDate departure, int guests, Category category, User user) {
+        Proposal proposal = new Proposal(arrival, departure, guests, category);
+        proposal.setRegistered(LocalDateTime.now());
         proposal.setStatus(Proposal.Status.NEW);
+        proposal.setUser(user);
         return Optional.of(proposalRepo.save(proposal));
     }
 /*

@@ -14,33 +14,31 @@
         <thead class="thead-light">
         <tr>
             <th scope="col"> [[#{n}]] </th>
-            <th scope="col"> [[#{roomNumber}]] </th>
             <th scope="col"> [[#{category}]] </th>
             <th scope="col"> [[#{arrival}]] </th>
             <th scope="col"> [[#{departure}]] </th>
             <th scope="col"> [[#{guests}]] </th>
-            <th scope="col"> [[#{description}]] </th>
+            <th scope="col"> [[#{period}]] </th>
             <th scope="col"> [[#{data_reg}]] </th>
-            <th scope="col"> [[#{price}]] </th>
+            <th scope="col"> [[#{statusProp}]] </th>
             <th scope="col"> [[#{detail}]] </th>
             <!--<th scope="col"> [[#{act_4}]] </th>-->
         </tr>
         </thead>
         <tbody>
-        <tr  th:each="order,step : ${orders}">
+        <tr  th:each="proposal,step : ${proposals}">
             <td scope="row">
-                <input type="hidden" value="#" th:value="${order.id}"/>
+                <input type="hidden" value="#" th:value="${proposal.id}"/>
                 <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
             </td>
-            <td th:text="${order.schedule.room.number}"></td>
-            <td th:text="${order.schedule.room.category.title}"></td>
-            <td th:text="${order.schedule.arrival}"></td>
-            <td th:text="${order.schedule.departure}"></td>
-            <td th:text="${order.schedule.room.guests}"></td>
-            <td th:text="${order.schedule.room.description}"></td>
-            <td th:text="${order.registered}"></td>
-            <td th:text="${order.correctPrice}"></td>
-            <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}+ '&pg=' + ${pg}"> [[#{detail}]] </a> </td>
+            <td th:text="${proposal.category.title}"></td>
+            <td th:text="${proposal.arrival}"></td>
+            <td th:text="${proposal.departure}"></td>
+            <td th:text="${proposal.guests}"></td>
+            <td th:text="${proposal.period}"></td>
+            <td th:text="${proposal.registeredStr}"></td>
+            <td th:text="${proposal.status}"></td>
+            <td> <a href="#" th:href="'/user/account/proposal/change?id=' + ${proposal.id}"> [[#{detail}]] </a> </td>
         </tr>
         </tbody>
     </table>

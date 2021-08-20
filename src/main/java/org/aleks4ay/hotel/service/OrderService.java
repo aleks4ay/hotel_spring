@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.model.Order;
 import org.aleks4ay.hotel.model.Room;
 import org.aleks4ay.hotel.model.Schedule;
@@ -76,10 +77,11 @@ public class OrderService {
     }
 
     public List<Order> getAllByUser(User user) {
-        return getAll()
+        return orderRepo.findAllByUser(user);
+                /*getAll()
                 .stream()
                 .filter(order -> order.getUser().getId() == user.getId())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 
 /*    public boolean delete(Long id) {
@@ -94,8 +96,13 @@ public class OrderService {
     public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
 
         Order builtOrder = buildOrder(roomNumber, dateStart, dateEnd, user);
-
-        if (scheduleService.checkRoom(builtOrder.getSchedule())) {
+        boolean isEmpty;
+        try {
+            isEmpty = scheduleService.checkRoom(builtOrder.getSchedule());
+        } catch (NotEmptyRoomException e) {
+            throw e;
+        }
+        if (isEmpty) {
             return Optional.of(orderRepo.save(builtOrder));
         }
         return Optional.empty();

@@ -39,7 +39,7 @@
             <td th:text="${order.schedule.departure}"></td>
             <td th:text="${order.schedule.room.guests}"></td>
             <td th:text="${order.schedule.room.description}"></td>
-            <td th:text="${order.registered}"></td>
+            <td th:text="${order.registeredStr}"></td>
             <td th:text="${order.correctPrice}"></td>
             <td th:text="${order.cost}"></td>
             <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}+ '&pg=' + ${pg}"> [[#{detail}]] </a> </td>

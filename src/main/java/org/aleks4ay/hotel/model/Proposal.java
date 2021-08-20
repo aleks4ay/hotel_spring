@@ -1,8 +1,10 @@
 package org.aleks4ay.hotel.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +29,14 @@ public class Proposal {
     private User user;
 
     public Proposal() {
+    }
+
+    public Proposal(LocalDate arrival, LocalDate departure, int guests, Category category) {
+        this.arrival = arrival;
+        this.departure = departure;
+        this.guests = guests;
+        this.category = category;
+        setPeriod();
     }
 
     public long getId() {
@@ -104,6 +114,11 @@ public class Proposal {
         this.period = (int) getArrival().until(getDeparture(), ChronoUnit.DAYS);
     }
 
+    public String getRegisteredStr() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
+        return registered.format(formatter);
+    }
+
     @Override
     public String toString() {
         return "Proposal{" +
@@ -114,7 +129,7 @@ public class Proposal {
                 ", period=" + period +
                 ", category=" + category +
                 ", status=" + status +
-                ", user=" + user.getLogin() +
+                ", user=" + user +
                 '}';
     }
 

@@ -2,6 +2,7 @@ package org.aleks4ay.hotel.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "orders")
@@ -88,16 +89,18 @@ public class Order {
         return getCorrectPrice() * getSchedule().getPeriod();
     }
 
+    public String getRegisteredStr() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
+        return registered.format(formatter);
+    }
+
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
                 ", registered=" + registered +
-//                ", arrival=" + schedule.getArrival() +
-//                ", departure=" + schedule.getDeparture() +
                 ", correctPrice=" + correctPrice +
                 ", status=" + status +
-//                ", room=" + room.getNumber() +
                 ", user=" + user.getLogin() +
                 '}';
     }
@@ -105,7 +108,6 @@ public class Order {
     public enum Status {
         NEW,
         CONFIRMED,
-//        MANAGED,
         PAID,
         CANCELED,
         COMPLETED

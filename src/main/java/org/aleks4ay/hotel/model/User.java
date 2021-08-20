@@ -208,7 +208,7 @@ public class User implements UserDetails{
         return roles.contains(Role.ROLE_USER);
     }
 
-    public String getDateByPattern() {
+    public String getRegisteredStr() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         return registered.format(formatter);
     }

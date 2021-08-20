@@ -87,7 +87,7 @@
             <td th:text="${user.name}"></td>
             <td th:text="${user.surname}"></td>
             <td th:text="${user.active}"></td>
-            <td th:text="${user.registered}"></td>
+            <td th:text="${user.registeredStr}"></td>
             <td th:text="${user.mainRole.title}"></td>
             <td> <a href="#" th:href="'/admin/user/change?id=' + ${user.id} + '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>
         </tr>
@@ -130,7 +130,7 @@
             <td th:text="${order.schedule.departure}"></td>
             <td th:text="${order.schedule.room.guests}"></td>
             <td th:text="${order.schedule.room.description}"></td>
-            <td th:text="${order.registered}"></td>
+            <td th:text="${order.registeredStr}"></td>
             <td th:text="${order.correctPrice}"></td>
             <!--<td> <a href="#" th:href="'/admin/order/change?id=' + ${user.id}+ '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>-->
         </tr>

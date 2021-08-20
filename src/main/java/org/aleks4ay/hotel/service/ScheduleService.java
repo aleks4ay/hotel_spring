@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.model.Room;
 import org.aleks4ay.hotel.model.Schedule;
 import org.aleks4ay.hotel.repository.ScheduleRepo;
@@ -71,23 +72,17 @@ public class ScheduleService{
                 java.sql.Date.valueOf(schedule.getArrival()),
                 java.sql.Date.valueOf(schedule.getDeparture()));
         if (result == null || result == 0) {
-            System.out.println("************* N U L L *****************");
             return true;
         }
         if (result > 0) {
             log.info("Selected room #{} already occupied.", schedule.getRoom().getNumber());
-            return false;
+            throw new NotEmptyRoomException("Selected room #" + schedule.getRoom().getNumber() + " already occupied.");
         }
         return true;
     }
 
     @Transactional
     public Schedule create(Schedule schedule) {
-//        System.out.println(schedule);
-//        final Optional<Room> room = new RoomService().getById(20L);
-//        schedule.setRoom(room.get());
-//        Schedule schedule1 = scheduleRepo.save(schedule);
-//        System.out.println("schedule1 = " + schedule1);
         return scheduleRepo.save(schedule);
     }
 

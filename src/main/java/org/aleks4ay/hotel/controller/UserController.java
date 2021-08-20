@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.controller;
 
+import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.exception.NotFoundException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.service.*;
@@ -79,7 +80,14 @@ public class UserController {
         LocalDate arrival = LocalDate.parse(request.getParameter("arrival"), formatter);
         LocalDate departure = LocalDate.parse(request.getParameter("departure"), formatter);
         Optional<User> userOptional = userService.getByLogin(request.getRemoteUser());
-        orderService.create(number, arrival, departure, userOptional.get());
+        try {
+            orderService.create(number, arrival, departure, userOptional.get());
+        } catch (NotEmptyRoomException e) {
+            Optional<Room> roomOptional = roomService.getByNumber(number);
+            model.put("roomOccupiedMessage", e);
+//            takeAnotherDate();
+            return doBooking(roomOptional.get().getId(), model, request);
+        }
         return "redirect:/user/account/order";
     }
 
@@ -106,6 +114,21 @@ public class UserController {
         model.put("proposals", proposalList);
         model.put("action", "proposal");
         return "userPage";
+    }
+
+    @PostMapping("/user/newProposal")
+    private String saveNewProposal(@RequestParam int guests, @RequestParam Category category,
+                                   Map<String, Object> model, HttpServletRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate arrival = LocalDate.parse(request.getParameter("arrival"), formatter);
+        LocalDate departure = LocalDate.parse(request.getParameter("departure"), formatter);
+        Optional<User> userOptional = userService.getByLogin(request.getRemoteUser());
+
+        Proposal proposal = new Proposal(arrival, departure, guests, category);
+        System.out.println("proposal = " + proposal);
+
+        proposalService.save(arrival, departure, guests, category, userOptional.get());
+        return "redirect:/user/account/proposal";
     }
 
     @GetMapping("user/account/bill")

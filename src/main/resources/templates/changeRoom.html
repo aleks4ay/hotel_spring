@@ -27,7 +27,7 @@
                     <small class="text-danger" th:if="${roomExistMessage}" th:text="#{roomExistMessage}"> </small>
                 </div>
                 <div class="mb-3">
-                    <label for="field2" class="form-label"> Room category </label>
+                    <label for="field2" class="form-label"> [[#{category}]] </label>
                     <select name="category" th:value="${room.category}" class="col-md-12 form-control" id="field2">
                         <option value="STANDARD">Select Category</option>
                         <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"

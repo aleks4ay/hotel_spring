@@ -9,7 +9,7 @@
 <!-- *******************  U S E R   leftForm  *********************  -->
 <form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
        style="height:700px; height: 350px; background-color: rgba(96, 162, 218, 0.2);">
-    <h4 th:if="${#httpServletRequest.remoteUser}" th:text="${#hello1+', '+#httpServletRequest.remoteUser}" ></h4>
+    <!--<h4 th:if="${#httpServletRequest.remoteUser}" th:text="${#hello1+', '+#httpServletRequest.remoteUser}" ></h4>-->
     <h4 th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}" />
 </form>
 

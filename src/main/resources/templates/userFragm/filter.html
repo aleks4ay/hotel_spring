@@ -13,6 +13,28 @@
 
     <h3> [[#{filters}]] </h3>
     <div class="mb-3">
+        <label for="cat3" class="form-label"> [[#{category}]] </label>
+        <select name="filter_category" th:value="${category}" class="col-md-12 form-control" id="cat3">
+            <option value="STANDARD">Select Category</option>
+            <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"
+                    th:selected="${filter_category == item}">
+            </option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="guest3" class="form-label">  [[#{guests}]]: </label>
+        <select name="filter_guests" th:value="room.guests" id="guest3" class="col-md-12 form-control" >
+            <option value="1" th:selected="${filter_guests == 1}"> 1 </option>
+            <option value="2" th:selected="${filter_guests == 2}"> 2 </option>
+            <option value="3" th:selected="${filter_guests == 3}"> 3 </option>
+            <option value="4" th:selected="${filter_guests == 4}"> 4 </option>
+        </select>
+    </div>
+
+<!--
+
+
+    <div class="mb-3">
         <label for="field1" class="form-label"> [[#{guests}]] </label>
 
 
@@ -25,13 +47,12 @@
     </div>
     <div class="mb-3">
         <label for="field2" class="form-label"> [[#{category}]] </label>
-
-
         <select id="field2" name="filter_category" class="col-md-12 form-control">
             <option value="">Select Category</option>
             <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
         </select>
     </div>
+-->
 
     <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
         <p th:if="${category}" th:text="${#category+': '+category}"> </p>
