@@ -1,10 +1,7 @@
 package org.aleks4ay.hotel.service;
 
 import org.aleks4ay.hotel.exception.NotEmptyRoomException;
-import org.aleks4ay.hotel.model.Order;
-import org.aleks4ay.hotel.model.Room;
-import org.aleks4ay.hotel.model.Schedule;
-import org.aleks4ay.hotel.model.User;
+import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.OrderRepo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -51,46 +50,19 @@ public class OrderService {
 
     public Optional<Order> getById(Long id) {
         Optional<Order> optional = orderRepo.findById(id);
-/*        if (optional.isPresent()) {
-            Order order = optional.get();
-            order.setUser(userService.getById(order.getUser().getId()).orElse(null));
-            order.setRoom(roomService.getById(order.getRoom().getId()).orElse(null));
-            order.setSchedule(scheduleService.getById(order.getSchedule().getId()).orElse(null));
-        }*/
         return optional;
     }
 
     public List<Order> getAll() {
         List<Order> orders = (List<Order>) orderRepo.findAll();
-/*
-        Map<Long, Room> rooms = roomService.getAllAsMap();
-        Map<Long, User> users = userService.getAllAsMap();
-        Map<Long, Schedule> schedules = scheduleService.getAllAsMap();
-
-        for (Order o : orders) {
-            o.setUser(users.get(o.getUser().getId()));
-            o.setRoom(rooms.get(o.getRoom().getId()));
-            o.setSchedule(schedules.get(o.getSchedule().getId()));
-        }
-*/
         return orders;
     }
 
     public List<Order> getAllByUser(User user) {
         return orderRepo.findAllByUser(user);
-                /*getAll()
-                .stream()
-                .filter(order -> order.getUser().getId() == user.getId())
-                .collect(Collectors.toList());*/
     }
 
-/*    public boolean delete(Long id) {
-        Connection conn = ConnectionPool.getConnection();
-        OrderDao orderDao = new OrderDao(conn);
-        boolean result = orderDao.delete(id);
-        ConnectionPool.closeConnection(conn);
-        return result;
-    }*/
+
 
     @Transactional
     public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
@@ -142,5 +114,31 @@ public class OrderService {
         entities.sort(comparing(Order::getId));
         List<Order> result = utilService.doPagination(positionOnPage, page, entities);
         return result;
+    }
+
+    public OrderDto createOrderDto(HttpServletRequest request, Room room) {
+        HttpSession session = request.getSession();
+        LocalDate dateStart = null;
+        LocalDate dateEnd = null;
+        if (session.getAttribute("arrival") != null) {
+            dateStart = (LocalDate) session.getAttribute("arrival");
+        }
+        if (session.getAttribute("departure") != null) {
+            dateEnd = (LocalDate) session.getAttribute("departure");
+        }
+
+        if (dateStart == null) {
+            if (dateEnd == null) {
+                dateStart = LocalDate.now();
+                dateEnd = dateStart.plusDays(1);
+            } else {
+                dateStart = dateEnd.minusDays(1);
+            }
+        } else if (dateEnd == null) {
+            dateEnd = dateStart.plusDays(1);
+        }
+
+        return new OrderDto(room.getNumber(), room.getCategory(), room.getGuests(), room.getDescription(),
+                dateStart, dateEnd, room.getPrice());
     }
 }

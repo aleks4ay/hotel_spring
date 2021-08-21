@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -65,10 +66,8 @@ public class ScheduleService{
 
 
     public boolean checkRoom(Schedule schedule) {
-        final Integer result = scheduleRepo.findAllByRoomId(
+        final Integer result = scheduleRepo.findOccupiedSchedule(
                 schedule.getRoom().getId(),
-                java.sql.Date.valueOf(schedule.getArrival()),
-                java.sql.Date.valueOf(schedule.getDeparture()),
                 java.sql.Date.valueOf(schedule.getArrival()),
                 java.sql.Date.valueOf(schedule.getDeparture()));
         if (result == null || result == 0) {
@@ -79,6 +78,14 @@ public class ScheduleService{
             throw new NotEmptyRoomException("Selected room #" + schedule.getRoom().getNumber() + " already occupied.");
         }
         return true;
+    }
+
+    public boolean chechRoomByDate(Room room, LocalDate date) {
+        return 0 == scheduleRepo.checkRoomByDate(room.getId(), Date.valueOf(date));
+    }
+
+    public boolean chechRoomByDate(Room room, LocalDate start, LocalDate finish) {
+        return 0 == scheduleRepo.findOccupiedSchedule(room.getId(), Date.valueOf(start), Date.valueOf(finish));
     }
 
     @Transactional
