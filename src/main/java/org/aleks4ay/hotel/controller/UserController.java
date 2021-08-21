@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.controller;
 
+import org.aleks4ay.hotel.exception.NoMoneyException;
 import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.service.*;
@@ -88,6 +89,7 @@ public class UserController {
     }
 
 
+
     @GetMapping("user/account/order")
     private String getOrderPage(Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
@@ -99,6 +101,38 @@ public class UserController {
         model.put("action", "order");
         return "userPage";
     }
+
+    @GetMapping("/user/account/order/change")
+    private String changeOrderPage(@RequestParam Long id, Map<String, Object> model, HttpServletRequest request) {
+        final User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
+        final Optional<Order> orderOptional = orderService.getById(id);
+        model.put("categories", Category.values());
+        model.put("order", orderOptional.get());
+        model.put("bill", user.getBill());
+        return "changeOrder";
+    }
+
+    @PostMapping("/user/account/changeOrder")
+    private String changeOrderStatus(@RequestParam Long id, Map<String, Object> model, HttpServletRequest request) {
+        final Optional<Order> orderOptional = orderService.getById(id);
+        String changeButtonName = request.getParameter("changeStatus");
+        if (changeButtonName != null) {
+            Order order = orderOptional.get();
+            if (changeButtonName.equalsIgnoreCase("confirm")) {
+                order.setStatus(Order.Status.CONFIRMED);
+                orderService.save(order);
+            } else if (changeButtonName.equalsIgnoreCase("pay")) {
+                try {
+                    orderService.pay(order);
+                } catch (NoMoneyException e) {
+                    model.put("noMoneyMessage", e);
+                    return changeOrderPage(id, model, request);
+                }
+            }
+        }
+        return "redirect:/user/account/order/change?id=" + id;
+    }
+
 
     @GetMapping("user/account/proposal")
     private String getProposalPage(Map<String, Object> model, HttpServletRequest request) {

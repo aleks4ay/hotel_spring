@@ -1,5 +1,6 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.exception.NoMoneyException;
 import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.OrderRepo;
@@ -55,14 +56,33 @@ public class OrderService {
 
     public List<Order> getAll() {
         List<Order> orders = (List<Order>) orderRepo.findAll();
+        orders.sort(comparing(Order::getId));
         return orders;
     }
 
     public List<Order> getAllByUser(User user) {
-        return orderRepo.findAllByUser(user);
+        List<Order> orders = orderRepo.findAllByUser(user);
+        orders.sort(comparing(Order::getId));
+        return orders;
     }
 
+    @Transactional
+    public Optional<Order> save(Order order) {
+        return Optional.of(orderRepo.save(order));
+    }
 
+    @Transactional
+    public Optional<Order> pay(Order order) {
+        Double cost = order.getCost();
+        Double bill = order.getUser().getBill();
+        if (bill >= cost) {
+            order.getUser().setBill(order.getUser().getBill() - cost);
+            order.setStatus(Order.Status.PAID);
+            return Optional.of(orderRepo.save(order));
+        } else {
+            throw new NoMoneyException("Sorry, there are not enough funds in your account");
+        }
+    }
 
     @Transactional
     public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
@@ -79,14 +99,6 @@ public class OrderService {
         }
         return Optional.empty();
     }
-
-/*    public boolean updateStatus(Order.Status status, long id) {
-        Connection conn = ConnectionPool.getConnection();
-        OrderDao orderDao = new OrderDao(conn);
-        boolean result = orderDao.updateStatus(status.toString(), id);
-        ConnectionPool.closeConnection(conn);
-        return result;
-    }*/
 
     private Order buildOrder(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
 

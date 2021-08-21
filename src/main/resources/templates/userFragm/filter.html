@@ -32,29 +32,6 @@
         </select>
     </div>
 
-<!--
-
-
-    <div class="mb-3">
-        <label for="field1" class="form-label"> [[#{guests}]] </label>
-
-
-        <select id="field1" name="filter_guests" class="col-md-12 form-control">
-            <option value="1" > 1 </option>
-            <option value="2" > 2 </option>
-            <option value="3" > 3 </option>
-            <option value="4" > 4 </option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="field2" class="form-label"> [[#{category}]] </label>
-        <select id="field2" name="filter_category" class="col-md-12 form-control">
-            <option value="">Select Category</option>
-            <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
-        </select>
-    </div>
--->
-
     <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
         <p th:if="${category}" > [[#{category}]]: [[${category}]]</p>
         <p th:if="${guests}"> [[#{guests}]]: [[${guests}]] </p>

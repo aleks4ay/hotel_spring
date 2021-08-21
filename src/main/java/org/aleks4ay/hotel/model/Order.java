@@ -13,6 +13,9 @@ public class Order {
     private long id;
     private LocalDateTime registered = LocalDateTime.now();
     private double correctPrice;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
 //    private Room room;

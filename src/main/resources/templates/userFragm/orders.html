@@ -15,13 +15,14 @@
         <tr>
             <th scope="col"> [[#{n}]] </th>
             <th scope="col"> [[#{roomNumber}]] </th>
-            <th scope="col"> [[#{category}]] </th>
+            <!--<th scope="col"> [[#{category}]] </th>-->
             <th scope="col"> [[#{arrival}]] </th>
             <th scope="col"> [[#{departure}]] </th>
-            <th scope="col"> [[#{guests}]] </th>
-            <th scope="col"> [[#{description}]] </th>
-            <th scope="col"> [[#{data_reg}]] </th>
-            <th scope="col"> [[#{price}]] </th>
+            <!--<th scope="col"> [[#{guests}]] </th>-->
+            <!--<th scope="col"> [[#{description}]] </th>-->
+            <!--<th scope="col"> [[#{data_reg}]] </th>-->
+            <!--<th scope="col"> [[#{price}]] </th>-->
+            <th scope="col"> [[#{statusOrd}]] </th>
             <th scope="col"> [[#{cost_2}]] </th>
             <th scope="col"> [[#{detail}]] </th>
             <!--<th scope="col"> [[#{act_4}]] </th>-->
@@ -31,18 +32,20 @@
         <tr  th:each="order,step : ${orders}">
             <td scope="row">
                 <input type="hidden" value="#" th:value="${order.id}"/>
-                <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+                <!--<span th:text="${itemOnPage * (pg - 1) + step.count}"/>-->
+                <span th:text="${order.id}"/>
             </td>
             <td th:text="${order.schedule.room.number}"></td>
-            <td th:text="${order.schedule.room.category.title}"></td>
+            <!--<td th:text="${order.schedule.room.category.title}"></td>-->
             <td th:text="${order.schedule.arrival}"></td>
             <td th:text="${order.schedule.departure}"></td>
-            <td th:text="${order.schedule.room.guests}"></td>
-            <td th:text="${order.schedule.room.description}"></td>
-            <td th:text="${order.registeredStr}"></td>
-            <td th:text="${order.correctPrice}"></td>
+            <!--<td th:text="${order.schedule.room.guests}"></td>-->
+            <!--<td th:text="${order.schedule.room.description}"></td>-->
+            <!--<td th:text="${order.registeredStr}"></td>-->
+            <!--<td th:text="${order.correctPrice}"></td>-->
+            <td th:text="${order.status}"></td>
             <td th:text="${order.cost}"></td>
-            <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}+ '&pg=' + ${pg}"> [[#{detail}]] </a> </td>
+            <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}"> [[#{detail}]] </a> </td>
         </tr>
         </tbody>
     </table>

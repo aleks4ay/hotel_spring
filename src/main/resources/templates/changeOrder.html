@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+
+        <div class="col-sm-3">
+
+        </div>
+
+
+        <div class="col-sm-6">
+            <form method="post" th:action="@{/user/account/changeOrder}" >
+                <h2> [[#{blank2}]][[${order.id}]] </h2>
+                <h3 th:if="${noMoneyMessage}" class="text-danger" th:text="#{noMoneyMessage}"></h3>
+
+                <div>
+                    <input type="hidden" name="id" th:value="${order.id}"/>
+
+                    <h4>[[#{statusOrd}]]: [[${order.status}]]</h4>
+                    <p>[[#{data_reg}]]: [[${order.registeredStr}]]</p>
+                    <h5>[[#{arrival}]]: [[${order.schedule.arrival}]]</h5>
+                    <p>[[#{departure}]]: [[${order.schedule.departure}]]</p>
+                    <p>[[#{roomNumber}]]: [[${order.schedule.room.number}]]</p>
+                    <p>[[#{category}]]: [[${order.schedule.room.category.title}]]</p>
+                    <p>[[#{guestsQuantity}]]: [[${order.schedule.room.guests}]]</p>
+                    <p>[[#{description}]]: [[${order.schedule.room.description}]]</p>
+                    <p>[[#{price}]]: [[${order.schedule.room.price}]]</p>
+                    <h3> [[#{cost}]]: [[${order.cost}]] [[#{currency}]] </h3>
+                </div>
+
+
+                <div class="btn-group" style="width: 100%">
+                    <button type="submit" th:if="${order.status.toString()=='NEW'}" class="btn btn-primary btn-my-r"
+                            name="changeStatus" value="confirm"> [[#{act_5}]] </button>
+                    <button type="submit" th:if="${order.status.toString()=='CONFIRMED'}" class="btn btn-primary btn-my-r"
+                            name="changeStatus" value="pay"> [[#{act_6}]] </button>
+                </div>
+            </form>
+            <hr>
+
+            <form method="get" th:action="@{/user/account/order}" >
+                <div class="btn-group" style="width: 100%">
+                    <input type="submit" class="btn btn-primary btn-my-r" th:value="#{returnToOrder}"/>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-sm-3">
+            <h5> [[#{bill}]]: [[${bill}]] [[#{currency}]] </h5>
+        </div>
+
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

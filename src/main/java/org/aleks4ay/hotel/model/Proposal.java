@@ -22,6 +22,7 @@ public class Proposal {
     private int period;
     private int guests;
     private Category category;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)

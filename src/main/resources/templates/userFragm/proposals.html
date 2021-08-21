@@ -21,8 +21,7 @@
             <th scope="col"> [[#{period}]] </th>
             <th scope="col"> [[#{data_reg}]] </th>
             <th scope="col"> [[#{statusProp}]] </th>
-            <th scope="col"> [[#{detail}]] </th>
-            <!--<th scope="col"> [[#{act_4}]] </th>-->
+            <!--<th scope="col"> [[#{detail}]] </th>-->
         </tr>
         </thead>
         <tbody>
@@ -38,7 +37,7 @@
             <td th:text="${proposal.period}"></td>
             <td th:text="${proposal.registeredStr}"></td>
             <td th:text="${proposal.status}"></td>
-            <td> <a href="#" th:href="'/user/account/proposal/change?id=' + ${proposal.id}"> [[#{detail}]] </a> </td>
+            <!--<td> <a href="#" th:href="'/user/account/proposal/change?id=' + ${proposal.id}"> [[#{detail}]] </a> </td>-->
         </tr>
         </tbody>
     </table>
