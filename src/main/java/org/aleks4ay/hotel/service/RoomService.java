@@ -107,10 +107,7 @@ public class RoomService {
     }
 
     public List<Room> doPagination(int positionOnPage, int page, List<Room> entities) {
-        UtilService utilService = new UtilService<Room>();
-        entities.sort(comparing(Room::getNumber));
-        List<Room> result = utilService.doPagination(positionOnPage, page, entities);
-        return result;
+        return new UtilService<Room>().doPagination(positionOnPage, page, entities);
     }
 
 
@@ -137,15 +134,30 @@ public class RoomService {
         return roomRepo.save(room);
     }
 
-    public List<Room> getAllWithFilters(Category category, int guests) {
+    private List<Room> getAllWithFilters(Category category, int guests) {
         return roomRepo.findAllByCategoryAndGuests(category, guests);
     }
 
-    public List<Room> getAllWithFilters(Category category) {
+    private List<Room> getAllWithFilters(Category category) {
         return roomRepo.findAllByCategory(category);
     }
 
-    public List<Room> getAllWithFilters(int guests) {
+    private List<Room> getAllWithFilters(int guests) {
         return roomRepo.findAllByGuests(guests);
+    }
+
+
+    public List<Room> setSorting(List<Room> rooms, HttpServletRequest request) {
+        String sortMethod = (String) request.getSession().getAttribute("sortMethod");
+        if (sortMethod.equalsIgnoreCase("byCategory")) {
+            rooms.sort(comparing(Room::getCategory));
+        } else if (sortMethod.equalsIgnoreCase("byPrice")) {
+            rooms.sort(comparing(Room::getPrice));
+        } else if (sortMethod.equalsIgnoreCase("byGuests")) {
+            rooms.sort(comparing(Room::getGuests));
+        } else {
+            rooms.sort(comparing(Room::getNumber));
+        }
+        return rooms;
     }
 }

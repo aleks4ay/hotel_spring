@@ -23,7 +23,7 @@
     </div>
     <div class="mb-3">
         <label for="guest3" class="form-label">  [[#{guests}]]: </label>
-        <select name="filter_guests" th:value="room.guests" id="guest3" class="col-md-12 form-control" >
+        <select name="filter_guests" th:value="${guests}" id="guest3" class="col-md-12 form-control" >
             <option value="0"> &nbsp; </option>
             <option value="1" th:selected="${guests == 1}"> 1 </option>
             <option value="2" th:selected="${guests == 2}"> 2 </option>

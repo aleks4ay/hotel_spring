@@ -32,6 +32,10 @@
     border:  solid 1px #d54d38;
 }
 
+.date-item {
+    margin-right: 20px;
+}
+
 .hello_1 {
     height: 1200px;
     background-size: 100%;

@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Controller
 public class UserController {
-    private static final int POSITION_ON_PAGE = 3;
+    private static final int POSITION_ON_PAGE = 4;
 
     @Autowired
     private ProposalService proposalService;
@@ -41,6 +41,7 @@ public class UserController {
         model.put("categories", Category.values());
         HttpSession session = request.getSession();
         List<Room> roomList = roomService.getRooms(request);
+        roomList = roomService.setSorting(roomList, request);
         roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
         model.put("rooms", roomList);
         model.put("action", "room");
@@ -57,6 +58,16 @@ public class UserController {
         parseDate(model, request);
         return getRooms(model, request);
     }
+
+    @PostMapping("user/room/sort")
+    public String setSort(@RequestParam String sortMethod, Map<String, Object> model, HttpServletRequest request) {
+        initPageAttributes(model, request);
+        request.getSession().setAttribute("sortMethod", sortMethod);
+        System.out.println("sort=" + sortMethod);
+//        parseSort(model, request, sortMethod);
+        return getRooms(model, request);
+    }
+
 
     @GetMapping("/user/booking")
     private String doBooking(@RequestParam Long id, Map<String, Object> model, HttpServletRequest request) {
@@ -208,6 +219,12 @@ public class UserController {
 
     private int initPageAttributes(Map<String, Object> model, HttpServletRequest request) {
         int page = 1;
+        Object sotrMethodObj = request.getSession().getAttribute("sortMethod");
+        if (sotrMethodObj == null) {
+            request.getSession().setAttribute("sortMethod", "byRoomNumber");
+        }
+        model.put("sortMethod", request.getSession().getAttribute("sortMethod"));
+
         if (request.getParameter("pg") != null) {
             page = Integer.parseInt(request.getParameter("pg"));
         }
@@ -254,4 +271,9 @@ public class UserController {
             model.put("departure", session.getAttribute("departure"));
         }
     }
+
+    private void parseSort(Map<String, Object> model, HttpServletRequest request, String sortMethod) {
+        request.getSession().setAttribute("sortMethod", sortMethod);
+    }
+
 }
