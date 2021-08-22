@@ -18,7 +18,7 @@
                 <small class="text-danger" th:if="${wrongPass!=null}" th:text="#{wrongPass}"> </small>
             </div>
             <button type="submit" class="btn btn-outline-success" th:text="#{loginNow}"> </button>
-            <button type="button" class="btn btn-outline-danger" onclick="window.location='${backUrl!=null ? backUrl : '/'}'"
+            <button type="button" class="btn btn-outline-danger" onclick="window.location='/'"
                     th:text="#{cancel}">
             </button>
             <div style="margin-top: 30px; font-size: 1.3em">

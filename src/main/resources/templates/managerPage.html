@@ -10,13 +10,13 @@
     <div class="row">
 
         <div class="col-sm-2">
-            <div  th:if="${action=='room'}" th:insert="~{userFragm/filter :: filters}"> </div>
+            <div  th:if="${action=='room' or action=='manageProposal'}" th:insert="~{userFragm/filter :: filters}"> </div>
         </div>
 
 
         <div class="col-sm-8">
 
-            <div th:insert="~{managerFragm/m_menu :: menu}"   class="btn-group" style="width: 100%"> </div>
+            <!--<div th:insert="~{managerFragm/m_menu :: menu}"   class="btn-group" style="width: 100%"> </div>-->
 
 
             <div th:if="${rooms}" th:insert="~{managerFragm/m_rooms :: rooms}"> </div>

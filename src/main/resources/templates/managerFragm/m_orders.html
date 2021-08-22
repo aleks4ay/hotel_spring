@@ -14,6 +14,7 @@
         <thead class="thead-light">
         <tr>
             <th scope="col"> [[#{n}]] </th>
+            <th scope="col"> [[#{name}]] </th>
             <th scope="col"> [[#{roomNumber}]] </th>
             <th scope="col"> [[#{arrival}]] </th>
             <th scope="col"> [[#{departure}]] </th>
@@ -28,6 +29,7 @@
                 <input type="hidden" value="#" th:value="${order.id}"/>
                 <span th:text="${order.id}"/>
             </td>
+            <td th:text="${order.user.name}"></td>
             <td th:text="${order.schedule.room.number}"></td>
             <td th:text="${order.schedule.arrival}"></td>
             <td th:text="${order.schedule.departure}"></td>

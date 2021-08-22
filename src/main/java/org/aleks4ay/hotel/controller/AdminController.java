@@ -26,8 +26,8 @@ import java.util.Optional;
 @Controller
 public class AdminController {
     private static final Logger log = LogManager.getLogger(AdminController.class);
-    private static final int POSITION_ON_PAGE_ROOM = 4;
-    private static final int POSITION_ON_PAGE = 8;
+    private static final int POSITION_ON_PAGE_ROOM = 3;
+    private static final int POSITION_ON_PAGE = 6;
 
     @Value("${web.upload-path}")
     private String uploadPath;

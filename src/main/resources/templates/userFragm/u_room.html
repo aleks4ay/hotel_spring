@@ -7,16 +7,18 @@
 <body>
 
 
-<!-- *******************  M A N A G E R   ROOM  *********************  -->
-<div th:fragment="rooms">
+<!-- *******************  U S E R   ORDERS  *********************  -->
+
+
+<div  th:fragment="rooms">
     <h2> [[#{adm_act_2}]]  </h2>
 
     <div class="btn-group">
-        <div th:insert="~{userFragm/user :: sorting}" th:if="${action=='room'}"> </div>
+        <!--<div th:insert="~{userFragm/user :: dateField}"> </div>-->
+        <div th:insert="~{userFragm/user :: sorting}"> </div>
     </div>
 
-    <h4  th:if="${rooms.isEmpty() and action=='manageProposal'}" class="text-danger"> [[#{errorSearch}]] </h4>
-    <table class="table" th:if="${!rooms.isEmpty()}">
+    <table class="table">
         <thead class="thead-light">
         <tr>
             <th scope="col"> [[#{n}]] </th>
@@ -40,14 +42,17 @@
             <td th:text="${room.description}"></td>
             <td th:text="${room.price}"></td>
             <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
-            <td th:if="${prId}">
-                <a href="#" th:href="'/manager/newOrder?room=' + ${room.number} + '&prId=' + ${prId}" th:text="#{act_2}"> </a>
+            <td th:if="${#httpServletRequest.remoteUser}">
+                <a href="#" th:href="'/user/booking?id=' + ${room.id}" th:text="#{act_2}"> </a>
             </td>
+            <td th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </td>
         </tr>
         </tbody>
     </table>
+    <!--<h3 th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </h3>-->
 
-    <ul th:if="${action=='room'}" th:insert="~{fragments/header :: pagination}"> </ul>
+    <ul th:insert="~{fragments/header :: pagination}"> </ul>
+
 </div>
 
 </body>

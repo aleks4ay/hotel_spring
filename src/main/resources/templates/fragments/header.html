@@ -24,31 +24,45 @@
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul class="navbar-nav mr-auto" style="font-size: 1.5rem">
+            <ul class="navbar-nav mr-auto" style="font-size: 1.1rem">
                 <li class="nav-item">
                     <a class="nav-link gap-item" th:href="@{/}" th:text="#{home}" >  </a>
                 </li>
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null or #httpServletRequest.isUserInRole('USER')}">
                     <a class="nav-link gap-item" th:href="@{/user/room}"> [[#{booking}]] </a>
                 </li>
-                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('USER')}">
-                    <a class="nav-link gap-item" th:href="@{/user/room}"> [[#{booking}]] </a>
-                </li>
+
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('USER')}">
                     <a class="nav-link gap-item" th:href="@{/user/account/order}"> [[#{account}]] </a>
                 </li>
+
+
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
-                    <a class="nav-link gap-item" th:href="@{/admin/room}"> [[#{admin}]] </a>
+                    <a class="nav-link gap-item" th:href="@{/admin/room}"> [[#{adm_act_2}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link gap-item" th:href="@{/admin/user}"> [[#{adm_act_1}]] </a>
+                </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('ADMIN')}">
+                    <a class="nav-link gap-item" th:href="@{/admin/order}"> [[#{adm_act_3}]] </a>
+                </li>
+
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
+                    <a class="nav-link gap-item" th:href="@{/manager/room}"> [[#{adm_act_2}]] </a>
                 </li>
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
-                    <a class="nav-link gap-item" th:href="@{/manager/proposal}"> [[#{manager}]] </a>
+                    <a class="nav-link gap-item" th:href="@{/manager/proposal}"> [[#{proposal}]] </a>
                 </li>
+                <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
+                    <a class="nav-link gap-item" th:href="@{/manager/order}"> [[#{adm_act_3}]] </a>
+                </li>
+
             </ul>
 
             <ul class="navbar-nav" style="font-size: 1.2rem; align-items: flex-end">
                 <li>
                     <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.remoteUser}"
-                           th:text="${' '+#httpServletRequest.remoteUser+' '}">
+                           th:text="${' '+#request.userPrincipal.principal.name+' '}">
                     </label>
                     <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.isUserInRole('ADMIN')}"
                            th:text="${'(ADMIN)'}">
@@ -103,16 +117,15 @@
 </div>
 
 
-<ul th:fragment="pagination" class="pagination"
-    th:with="command=${userType == 'guest' ? 'user' : userType}" >
+<ul th:fragment="pagination" class="pagination" >
     <li class="page-item ${pg == 1 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=1'}">1</a>
+        <a class="page-link" th:href="${#httpServletRequest.requestURI + '?pg=' + (pg>1?pg-1:1)}"> < </a>
     </li>
-    <li class="page-item ${pg == 2 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=2'}">2</a>
+    <li class="page-item">
+        <p class="page-link" th:text="${pg}"></p>
     </li>
     <li class="page-item ${pg == 3 ? 'active' : ''}">
-        <a class="page-link" th:href="${'/' + command + '/' + action + '?pg=' + (pg+1)}"> > </a>
+        <a class="page-link" th:href="${#httpServletRequest.requestURI + '?pg=' + (pg+1)}"> > </a>
     </li>
 </ul>
 

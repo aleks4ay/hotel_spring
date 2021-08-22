@@ -15,57 +15,15 @@
 
         <div class="col-sm-8">
 
-            <div>
-                <h2> [[#{adm_act_2}]]  </h2>
-
-                <div class="btn-group">
-                    <div th:insert="~{userFragm/user :: dateField}"> </div>
-                    <div th:insert="~{userFragm/user :: sorting}"> </div>
-                </div>
-
-                <table class="table">
-                    <thead class="thead-light">
-                    <tr>
-                        <th scope="col"> [[#{n}]] </th>
-                        <th scope="col"> [[#{number}]] </th>
-                        <th scope="col"> [[#{category}]] </th>
-                        <th scope="col"> [[#{guests}]] </th>
-                        <th scope="col"> [[#{description}]] </th>
-                        <th scope="col"> [[#{price}]] </th>
-                        <th scope="col"> [[#{photo}]] </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="room,step : ${rooms}">
-                        <td scope="row">
-                            <input type="hidden" value="#" th:value="${room.id}"/>
-                            <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
-                        </td>
-                        <td th:text="${room.number}"></td>
-                        <td th:text="${room.category.title}"></td>
-                        <td th:text="${room.guests}"></td>
-                        <td th:text="${room.description}"></td>
-                        <td th:text="${room.price}"></td>
-                        <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
-                        <td th:if="${#httpServletRequest.remoteUser}">
-                            <a href="#" th:href="'/user/booking?id=' + ${room.id}" th:text="#{act_2}"> </a>
-                        </td>
-                        <td th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{act_2}"> </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <h3 th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </h3>
-
-                <ul th:insert="~{fragments/header :: pagination}"> </ul>
-
-            </div>
+            <div th:insert="~{userFragm/u_room :: rooms}"> </div>
 
         </div>
 
 
         <div class="col-sm-2">
             <div th:if="${#httpServletRequest.isUserInRole('USER')}"
-                 th:insert="~{userFragm/newProposal :: newProposal}"> </div>
+                 th:insert="~{userFragm/newProposal :: newProposal}">
+            </div>
         </div>
     </div>
 </div>

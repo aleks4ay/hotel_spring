@@ -77,10 +77,10 @@ body {
 }
 
 body.login{
-    background-image: url(/static/img/background.jpg);
+    background-image: url(/static/img/background2.jpg);
     background-size: 100%;
-    background-position: center;
     background-repeat: no-repeat;
+    background-position: top;
 }
 
 .center1 {

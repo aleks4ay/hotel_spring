@@ -27,7 +27,8 @@ import java.util.Optional;
 @Controller
 public class ManagerController {
     private static final Logger log = LogManager.getLogger(ManagerController.class);
-    private static final int POSITION_ON_PAGE = 4;
+    private static final int POSITION_ON_PAGE_ROOM = 3;
+    private static final int POSITION_ON_PAGE = 6;
 
     @Autowired
     private ProposalService proposalService;
@@ -51,15 +52,14 @@ public class ManagerController {
         HttpSession session = request.getSession();
         List<Room> roomList = roomService.getRooms(request);
         roomList = roomService.setSorting(roomList, request);
-        roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
+        roomList = roomService.doPagination(POSITION_ON_PAGE_ROOM, page, roomList);
         model.put("rooms", roomList);
-//        if (!roomList.isEmpty()) {
-//        }
         model.putIfAbsent("action", "room");
         model.put("arrival", session.getAttribute("arrival"));
         model.put("departure", session.getAttribute("departure"));
         model.put("guests", session.getAttribute("guests"));
         model.put("category", session.getAttribute("category"));
+        model.put("itemOnPage", POSITION_ON_PAGE_ROOM);
         return "managerPage";
     }
 
@@ -95,18 +95,18 @@ public class ManagerController {
         return "redirect:/manager/proposal";
     }
 
-    @PostMapping("/manager/room/date")
+/*    @PostMapping("/manager/room/date")
     public String setDate(Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
         Utils.parseDate(model, request);
         return getRooms(model, request);
-    }
+    }*/
 
     @PostMapping("/manager/room/sort")
     public String setSort(@RequestParam String sortMethod, Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
         request.getSession().setAttribute("sortMethod", sortMethod);
-        return getRooms(model, request);
+        return "redirect:/manager/room";
     }
 
     @GetMapping("/manager/order")
@@ -129,8 +129,10 @@ public class ManagerController {
     }
 
 
-    @PostMapping("/manager/filter")
+    @PostMapping("/manager/room/filter")
     private String doFiltering(Map<String, Object> model, HttpServletRequest request) {
+        initPageAttributes(model, request);
+        Utils.parseDate(model, request);
         Utils.doFiltering(model, request);
         return "redirect:/manager/room";
     }

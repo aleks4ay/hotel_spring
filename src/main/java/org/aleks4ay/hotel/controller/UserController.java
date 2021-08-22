@@ -21,7 +21,8 @@ import java.util.Optional;
 @Controller
 public class UserController {
     private static final Logger log = LogManager.getLogger(UserController.class);
-    private static final int POSITION_ON_PAGE = 4;
+    private static final int POSITION_ON_PAGE_ROOM = 3;
+    private static final int POSITION_ON_PAGE = 6;
 
     @Autowired
     private ProposalService proposalService;
@@ -45,28 +46,29 @@ public class UserController {
         HttpSession session = request.getSession();
         List<Room> roomList = roomService.getRooms(request);
         roomList = roomService.setSorting(roomList, request);
-        roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
+        roomList = roomService.doPagination(POSITION_ON_PAGE_ROOM, page, roomList);
         model.put("rooms", roomList);
-        model.put("action", "room");
+        model.putIfAbsent("action", "room");
         model.put("arrival", session.getAttribute("arrival"));
         model.put("departure", session.getAttribute("departure"));
         model.put("guests", session.getAttribute("guests"));
         model.put("category", session.getAttribute("category"));
+        model.put("itemOnPage", POSITION_ON_PAGE_ROOM);
         return "userPageRoom";
     }
 
-    @PostMapping("/user/room/date")
+/*    @PostMapping("/user/room/date")
     public String setDate(Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
         Utils.parseDate(model, request);
         return getRooms(model, request);
-    }
+    }*/
 
     @PostMapping("user/room/sort")
     public String setSort(@RequestParam String sortMethod, Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
         request.getSession().setAttribute("sortMethod", sortMethod);
-        return getRooms(model, request);
+        return "redirect:/user/room";//getRooms(model, request);
     }
 
 
@@ -105,9 +107,10 @@ public class UserController {
 
     @GetMapping("user/account/order")
     private String getOrderPage(Map<String, Object> model, HttpServletRequest request) {
-        initPageAttributes(model, request);
+        int page = initPageAttributes(model, request);
         User user = userService.getByLogin(request.getRemoteUser()).orElse(null);
         List<Order> orderList = orderService.getAllByUser(user);
+        orderList = orderService.doPagination(POSITION_ON_PAGE, page, orderList);
         user.setOrders(orderList);
 
         model.put("orders", orderList);
@@ -192,9 +195,11 @@ public class UserController {
         return "redirect:/user/account/bill";
     }
 
-    @PostMapping("/user/filter")
+    @PostMapping("/user/room/filter")
     private String doFiltering(Map<String, Object> model, HttpServletRequest request) {
+        initPageAttributes(model, request);
         Utils.doFiltering(model, request);
+        Utils.parseDate(model, request);
         return "redirect:/user/room";
     }
 

@@ -8,13 +8,14 @@
 
 
 
-<form th:fragment="filters" class="sticky rounded-lg shadow p-4 mb-4" method="post" th:action="@{/user/filter}"
-       style="background-color: rgba(96, 162, 218, 0.2);">
+<form th:fragment="filters" class="sticky rounded-lg shadow p-4 mb-4" method="post"
+      th:action="${#httpServletRequest.requestURI + '/filter'}" style="background-color: rgba(96, 162, 218, 0.2);">
 
-    <h3> [[#{filters}]] </h3>
+    <h3 th:if="${action=='room'}"> [[#{filters}]] </h3>
     <div class="mb-3">
         <label for="cat3" class="form-label"> [[#{category}]] </label>
-        <select name="filter_category" th:value="${category}" class="col-md-12 form-control" id="cat3">
+        <select name="filter_category" th:value="${category}" class="col-md-12 form-control" id="cat3"
+                th:disabled="${action=='manageProposal'}">
             <option>Select Category</option>
             <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"
                     th:selected="${category == item}">
@@ -23,7 +24,8 @@
     </div>
     <div class="mb-3">
         <label for="guest3" class="form-label">  [[#{guests}]]: </label>
-        <select name="filter_guests" th:value="${guests}" id="guest3" class="col-md-12 form-control" >
+        <select name="filter_guests" th:value="${guests}" id="guest3" class="col-md-12 form-control"
+                th:disabled="${action=='manageProposal'}">
             <option value="0"> &nbsp; </option>
             <option value="1" th:selected="${guests == 1}"> 1 </option>
             <option value="2" th:selected="${guests == 2}"> 2 </option>
@@ -31,8 +33,17 @@
             <option value="4" th:selected="${guests == 4}"> 4 </option>
         </select>
     </div>
-
-    <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
+    <div class="mb-3 date-item">
+        <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
+        <input type="date" class="form-control" id="dateStart"  name="arrival" th:value="${arrival}"
+               th:disabled="${action=='manageProposal'}"/>
+    </div>
+    <div class="mb-3 date-item">
+        <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
+        <input type="date" class="form-control" id="dateEnd" name="departure" th:value="${departure}"
+               th:disabled="${action=='manageProposal'}"/>
+    </div>
+    <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em" th:if="${action!='manageProposal'}">
         <p th:if="${category}" > [[#{category}]]: [[${category}]]</p>
         <p th:if="${guests}"> [[#{guests}]]: [[${guests}]] </p>
 
