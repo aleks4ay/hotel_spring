@@ -65,6 +65,11 @@ public class ProposalService {
         proposal.setUser(user);
         return Optional.of(proposalRepo.save(proposal));
     }
+
+    @Transactional
+    public Optional<Proposal> update(Proposal proposal) {
+        return Optional.of(proposalRepo.save(proposal));
+    }
 /*
     public List<Proposal> getAll(int positionOnPage, int page) {
         Connection conn = ConnectionPool.getConnection();

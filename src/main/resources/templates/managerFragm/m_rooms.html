@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>Form items</title>
+</head>
+<body>
+
+
+<!-- *******************  M A N A G E R   ROOM  *********************  -->
+<div th:fragment="rooms">
+    <h2> [[#{adm_act_2}]]  </h2>
+
+    <div class="btn-group"> <!--  th:if="${action=='room'}" -->
+        <div th:insert="~{userFragm/user :: dateField}"> </div>
+        <div th:insert="~{userFragm/user :: sorting}" th:if="${action=='room'}"> </div>
+    </div>
+
+    <h4  th:if="${rooms.isEmpty()}" class="text-danger"> [[#{errorSearch}]] </h4>
+    <table class="table" th:if="${!rooms.isEmpty()}">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col"> [[#{n}]] </th>
+            <th scope="col"> [[#{number}]] </th>
+            <th scope="col"> [[#{category}]] </th>
+            <th scope="col"> [[#{guests}]] </th>
+            <th scope="col"> [[#{description}]] </th>
+            <th scope="col"> [[#{price}]] </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room,step : ${rooms}">
+            <td scope="row">
+                <input type="hidden" value="#" th:value="${room.id}"/>
+                <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+            </td>
+            <td th:text="${room.number}"></td>
+            <td th:text="${room.category.title}"></td>
+            <td th:text="${room.guests}"></td>
+            <td th:text="${room.description}"></td>
+            <td th:text="${room.price}"></td>
+            <td th:if="${prId}">
+                <a href="#" th:href="'/manager/newOrder?room=' + ${room.number} + '&prId=' + ${prId}" th:text="#{act_2}"> </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul th:if="${action=='room'}" th:insert="~{fragments/header :: pagination}"> </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+            <div  th:if="${action=='room'}" th:insert="~{userFragm/filter :: filters}"> </div>
+        </div>
+
+
+        <div class="col-sm-8">
+
+            <div th:insert="~{managerFragm/m_menu :: menu}"   class="btn-group" style="width: 100%"> </div>
+
+
+            <div th:if="${rooms}" th:insert="~{managerFragm/m_rooms :: rooms}"> </div>
+
+            <div th:if="${orders}" th:insert="~{managerFragm/m_orders :: orders}"> </div>
+
+            <div th:if="${proposals}" th:insert="~{managerFragm/m_proposals :: proposals}"> </div>
+
+        </div>
+
+
+        <div class="col-sm-2">
+
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

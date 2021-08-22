@@ -32,6 +32,7 @@ public class OrderService {
     private OrderRepo orderRepo;
     private RoomService roomService;
     private ScheduleService scheduleService;
+    private ProposalService proposalService;
 
     @Autowired
     public void setOrderRepo(OrderRepo orderRepo) {
@@ -48,6 +49,10 @@ public class OrderService {
         this.scheduleService = scheduleService;
     }
 
+    @Autowired
+    public void setProposalService(ProposalService proposalService) {
+        this.proposalService = proposalService;
+    }
 
     public Optional<Order> getById(Long id) {
         Optional<Order> optional = orderRepo.findById(id);
@@ -87,7 +92,7 @@ public class OrderService {
     @Transactional
     public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
 
-        Order builtOrder = buildOrder(roomNumber, dateStart, dateEnd, user);
+        Order builtOrder = buildOrder(roomNumber, dateStart, dateEnd, user, Role.ROLE_USER);
         boolean isEmpty;
         try {
             isEmpty = scheduleService.checkRoom(builtOrder.getSchedule());
@@ -100,7 +105,31 @@ public class OrderService {
         return Optional.empty();
     }
 
-    private Order buildOrder(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
+
+    @Transactional
+    public Optional<Order> createFromManager(int roomNumber, Proposal proposal, User user) {
+
+        Order builtOrder = buildOrder(roomNumber, proposal.getArrival(), proposal.getDeparture(), user, Role.ROLE_MANAGER);
+        boolean isEmpty;
+        try {
+            isEmpty = scheduleService.checkRoom(builtOrder.getSchedule());
+        } catch (NotEmptyRoomException e) {
+            throw e;
+        }
+        if (isEmpty) {
+            Optional<Order> orderOptional = Optional.of(orderRepo.save(builtOrder));
+            if (orderOptional.isPresent()) {
+                proposal.setStatus(Proposal.Status.MANAGED);
+//                Proposal proposalFromDB = proposalService.getById(proposal.getId()).get();
+//                proposalFromDB.setStatus(Proposal.Status.MANAGED);
+                proposalService.update(proposal);
+                return orderOptional;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Order buildOrder(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user, Role role) {
 
         Room room = roomService.getByNumber(roomNumber).orElse(null);
 
@@ -108,7 +137,7 @@ public class OrderService {
         tempOrder.setRegistered(LocalDateTime.now());
         Order.Status orderStatus = Order.Status.CONFIRMED;
         Schedule.RoomStatus roomStatus = Schedule.RoomStatus.BOOKED;
-        if (user.isManager()) {
+        if (role == Role.ROLE_MANAGER) {
             orderStatus = Order.Status.NEW;
             roomStatus = Schedule.RoomStatus.RESERVED;
         }

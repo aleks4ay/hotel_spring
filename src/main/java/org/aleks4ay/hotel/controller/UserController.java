@@ -4,6 +4,8 @@ import org.aleks4ay.hotel.exception.NoMoneyException;
 import org.aleks4ay.hotel.exception.NotEmptyRoomException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.service.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class UserController {
+    private static final Logger log = LogManager.getLogger(UserController.class);
     private static final int POSITION_ON_PAGE = 4;
 
     @Autowired
@@ -55,7 +58,7 @@ public class UserController {
     @PostMapping("/user/room/date")
     public String setDate(Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
-        parseDate(model, request);
+        Utils.parseDate(model, request);
         return getRooms(model, request);
     }
 
@@ -63,8 +66,6 @@ public class UserController {
     public String setSort(@RequestParam String sortMethod, Map<String, Object> model, HttpServletRequest request) {
         initPageAttributes(model, request);
         request.getSession().setAttribute("sortMethod", sortMethod);
-        System.out.println("sort=" + sortMethod);
-//        parseSort(model, request, sortMethod);
         return getRooms(model, request);
     }
 
@@ -86,9 +87,10 @@ public class UserController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate arrival = LocalDate.parse(request.getParameter("arrival"), formatter);
         LocalDate departure = LocalDate.parse(request.getParameter("departure"), formatter);
-        Optional<User> userOptional = userService.getByLogin(request.getRemoteUser());
+        User user = userService.getByLogin(request.getRemoteUser()).get();
         try {
-            orderService.create(number, arrival, departure, userOptional.get());
+            Optional<Order> order = orderService.create(number, arrival, departure, user);
+            log.info("Was create new Order '{}'", order);
         } catch (NotEmptyRoomException e) {
             request.getSession().setAttribute("arrival", arrival);
             request.getSession().setAttribute("departure", departure);
@@ -192,88 +194,16 @@ public class UserController {
 
     @PostMapping("/user/filter")
     private String doFiltering(Map<String, Object> model, HttpServletRequest request) {
-
-        String filterButtonName = request.getParameter("filter");
-
-        if (filterButtonName != null && filterButtonName.equalsIgnoreCase("filterCansel")) {
-            request.removeAttribute("category");
-            request.removeAttribute("guests");
-            model.remove("category");
-            model.remove("guests");
-            request.getSession().removeAttribute("category");
-            request.getSession().removeAttribute("guests");
-            request.getSession().removeAttribute("arrival");
-            request.getSession().removeAttribute("departure");
-        } else {
-            if (!request.getParameter("filter_category").equalsIgnoreCase("Select Category")) {
-                Category category = Category.valueOf(request.getParameter("filter_category"));
-                request.getSession().setAttribute("category", category);
-            }
-            if (!request.getParameter("filter_guests").equals("0")) {
-                request.getSession().setAttribute("guests", Integer.parseInt(request.getParameter("filter_guests")));
-            }
-        }
+        Utils.doFiltering(model, request);
         return "redirect:/user/room";
     }
 
-
     private int initPageAttributes(Map<String, Object> model, HttpServletRequest request) {
-        int page = 1;
-        Object sotrMethodObj = request.getSession().getAttribute("sortMethod");
-        if (sotrMethodObj == null) {
-            request.getSession().setAttribute("sortMethod", "byRoomNumber");
-        }
-        model.put("sortMethod", request.getSession().getAttribute("sortMethod"));
-
-        if (request.getParameter("pg") != null) {
-            page = Integer.parseInt(request.getParameter("pg"));
-        }
-        model.put("itemOnPage", POSITION_ON_PAGE);
-        model.put("pg", page);
-
-        Object userObject = request.getRemoteUser();
-
-        String userType;
-        if(userObject == null) {
-            userType = "guest";
+        if(request.getRemoteUser() == null) {
+            model.put("userType", "guest");
         } else {
-            userType = "user";
+            model.put("userType", "user");
         }
-        model.put("userType", userType);
-
-        return page;
+        return Utils.initPageAttributes(model, request, POSITION_ON_PAGE);
     }
-
-
-
-    private void parseDate(Map<String, Object> model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String stringArrival = request.getParameter("arrival");
-        String stringDeparture = request.getParameter("departure");
-
-        LocalDate dateStart;
-        LocalDate dateEnd;
-
-        if (stringArrival != null && !stringArrival.isEmpty()) {
-            dateStart = LocalDate.parse(stringArrival, formatter);
-            model.put("arrival", dateStart);
-            session.setAttribute("arrival", dateStart);
-        } else {
-            model.put("arrival", session.getAttribute("arrival"));
-        }
-        if (stringDeparture != null && !stringDeparture.isEmpty()) {
-            dateEnd = LocalDate.parse(stringDeparture, formatter);
-            model.put("departure", dateEnd);
-            session.setAttribute("departure", dateEnd);
-        } else {
-            model.put("departure", session.getAttribute("departure"));
-        }
-    }
-
-    private void parseSort(Map<String, Object> model, HttpServletRequest request, String sortMethod) {
-        request.getSession().setAttribute("sortMethod", sortMethod);
-    }
-
 }

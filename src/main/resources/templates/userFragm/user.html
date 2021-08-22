@@ -9,65 +9,64 @@
 <!-- *******************  U S E R   leftForm  *********************  -->
 <form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
        style="height:700px; height: 350px; background-color: rgba(96, 162, 218, 0.2);">
-    <!--<h4 th:if="${#httpServletRequest.remoteUser}" th:text="${#hello1+', '+#httpServletRequest.remoteUser}" ></h4>-->
     <h4 th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}" />
 </form>
 
 
 <!-- *******************  U S E R   dateField  and sorting *********************  -->
 
-<div th:fragment="dateField" class="btn-group">
-    <form method="post" th:action="@{/user/room/date}" >
-        <div class="btn-group">
-            <div class="mb-3 date-item">
-                <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
-                <input type="date" class="form-control" id="dateStart"  name="arrival" th:value="${arrival}" />
-            </div>
-            <div class="mb-3 date-item">
-                <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
-                <input type="date" class="form-control" id="dateEnd" name="departure" th:value="${departure}" />
-            </div>
-            <div> <!-- class="mb-3 date-item" style="width: 30%; color: rgba(19, 23, 186, 0.9); font-size: 1.2em"-->
-                <button type="submit" class="btn btn-outline-success" style="height: 4.2em">  [[#{dateEnter}]]  </button>
-            </div>
-        </div>
-    </form>
-    <form th:fragment="sorting" method="post" th:action="@{/user/room/sort}">
-        <div class="btn-group" style="margin-left: 10em">
-            <div class="mb-3 date-item">
-                <label for="field11" class="form-label"> [[#{sort}]]: </label>
-                <select id="field11" name="sortMethod" th:value="${sortMethod}" class="form-control" style="width: 20em" required>
-                    <option value="byRoomNumber" th:selected="${sortMethod == 'byRoomNumber'}"> byRoomNumber </option>
-                    <option value="byPrice" th:selected="${sortMethod == 'byPrice'}"> byPrice </option>
-                    <option value="byGuests" th:selected="${sortMethod == 'byGuests'}"> byGuests </option>
-                    <option value="byCategory" th:selected="${sortMethod == 'byCategory'}"> byCategory </option>
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-outline-success" style="height: 4.2em">  [[#{doSort}]]  </button>
-            </div>
-        </div>
-    </form>
-</div>
-<!--
-
-&lt;!&ndash; *******************  U S E R   sorting  *********************  &ndash;&gt;
-<form th:fragment="sorting" method="get" th:action="@{/user/room/sotr}" style="width: 70%">
+<form th:fragment="dateField" th:with="command=${userType == 'guest' ? 'user' : userType}"
+      method="post" th:action="${'/' + command + '/room/date'}">
     <div class="btn-group">
         <div class="mb-3 date-item">
+            <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
+            <input type="date" class="form-control" id="dateStart"  name="arrival" th:value="${arrival}"
+                   th:disabled="${action=='manageProposal'}"/>
+        </div>
+        <div class="mb-3 date-item">
+            <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
+            <input type="date" class="form-control" id="dateEnd" name="departure" th:value="${departure}"
+                   th:disabled="${action=='manageProposal'}"/>
+        </div>
+        <div th:if="${action != 'manageProposal'}">
+            <button type="submit" class="btn btn-outline-success" style="height: 4.2em">  [[#{dateEnter}]]  </button>
+        </div>
+
+        <div th:if="${action == 'manageProposal'}" class="mb-3 date-item" >
+            <label for="cat11" class="form-label"> [[#{category}]]: </label>
+            <input type="text" class="form-control" id="cat11"  name="category" th:value="${category}" disabled/>
+        </div>
+        <div th:if="${action == 'manageProposal'}" class="mb-3 date-item" >
+            <label for="guests11" class="form-label"> [[#{guests}]]: </label>
+            <input type="text" class="form-control" id="guests11"  name="guests" th:value="${guests}" disabled/>
+        </div>
+
+    </div>
+</form>
+
+
+
+
+<!-- *******************  U S E R   sorting  ********************* -->
+<form th:fragment="sorting" th:with="command=${userType == 'guest' ? 'user' : userType}"
+      method="post" th:action="${'/' + command + '/room/sort'}">
+    <div class="btn-group" style="margin-left: 10em">
+        <div class="mb-3 date-item">
             <label for="field11" class="form-label"> [[#{sort}]]: </label>
-            <select id="field11" name="guests" class="col-md-12 form-control" required>
-                <option value="1"> byPrice </option>
-                <option value="2"> byGuests </option>
-                <option value="3"> byCategory </option>
-                <option value="4"> byRoomNumber </option>
+            <select id="field11" name="sortMethod" th:value="${sortMethod}" class="form-control" style="width: 20em" required>
+                <option value="byRoomNumber" th:selected="${sortMethod == 'byRoomNumber'}"> byRoomNumber </option>
+                <option value="byPrice" th:selected="${sortMethod == 'byPrice'}"> byPrice </option>
+                <option value="byGuests" th:selected="${sortMethod == 'byGuests'}"> byGuests </option>
+                <option value="byCategory" th:selected="${sortMethod == 'byCategory'}"> byCategory </option>
             </select>
         </div>
-        <div style="color: rgba(19, 23, 186, 0.9); font-size: 1.2em">
-            <button type="submit" class="btn btn-outline-success" >  [[#{doSort}]]  </button>
+        <div>
+            <button type="submit" class="btn btn-outline-success" style="height: 4.2em">  [[#{doSort}]]  </button>
         </div>
     </div>
-</form>-->
+</form>
+<!--
+
 
 
 <!-- *******************  U S E R   bill  *********************  -->

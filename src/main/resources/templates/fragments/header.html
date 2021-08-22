@@ -53,6 +53,9 @@
                     <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.isUserInRole('ADMIN')}"
                            th:text="${'(ADMIN)'}">
                     </label>
+                    <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.isUserInRole('MANAGER')}"
+                           th:text="${'(MANAGER)'}">
+                    </label>
                     <label style="color: rgba(60, 189, 234, 0.54)"
                            th:if="${#httpServletRequest.isUserInRole('USER') and not #httpServletRequest.isUserInRole('ADMIN')}"
                            th:text="${'(USER)'}">
