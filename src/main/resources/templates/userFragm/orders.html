@@ -24,6 +24,7 @@
             <!--<th scope="col"> [[#{price}]] </th>-->
             <th scope="col"> [[#{statusOrd}]] </th>
             <th scope="col"> [[#{cost_2}]] </th>
+            <th scope="col"> [[#{photo}]] </th>
             <th scope="col"> [[#{detail}]] </th>
             <!--<th scope="col"> [[#{act_4}]] </th>-->
         </tr>
@@ -45,6 +46,7 @@
             <!--<td th:text="${order.correctPrice}"></td>-->
             <td th:text="${order.status}"></td>
             <td th:text="${order.cost}"></td>
+            <td> <img width="100px" th:src="${'/static/img/' + order.schedule.room.imgName}"/> </td>
             <td> <a href="#" th:href="'/user/account/order/change?id=' + ${order.id}"> [[#{detail}]] </a> </td>
         </tr>
         </tbody>

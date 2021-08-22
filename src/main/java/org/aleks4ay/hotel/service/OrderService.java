@@ -180,6 +180,6 @@ public class OrderService {
         }
 
         return new OrderDto(room.getNumber(), room.getCategory(), room.getGuests(), room.getDescription(),
-                dateStart, dateEnd, room.getPrice());
+                dateStart, dateEnd, room.getPrice(), room.getImgName());
     }
 }

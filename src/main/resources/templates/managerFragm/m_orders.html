@@ -18,6 +18,7 @@
             <th scope="col"> [[#{arrival}]] </th>
             <th scope="col"> [[#{departure}]] </th>
             <th scope="col"> [[#{statusOrd}]] </th>
+            <th scope="col"> [[#{photo}]] </th>
             <th scope="col"> [[#{cost_2}]] </th>
         </tr>
         </thead>
@@ -31,6 +32,7 @@
             <td th:text="${order.schedule.arrival}"></td>
             <td th:text="${order.schedule.departure}"></td>
             <td th:text="${order.status}"></td>
+            <td> <img width="100px" th:src="${'/static/img/' + order.schedule.room.imgName}"/> </td>
             <td th:text="${order.cost}"></td>
         </tr>
         </tbody>

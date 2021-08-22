@@ -26,6 +26,7 @@
             <th scope="col"> [[#{guests}]] </th>
             <th scope="col"> [[#{description}]] </th>
             <th scope="col"> [[#{price}]] </th>
+            <th scope="col"> [[#{photo}]] </th>
         </tr>
         </thead>
         <tbody>
@@ -39,6 +40,7 @@
             <td th:text="${room.guests}"></td>
             <td th:text="${room.description}"></td>
             <td th:text="${room.price}"></td>
+            <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
             <td th:if="${prId}">
                 <a href="#" th:href="'/manager/newOrder?room=' + ${room.number} + '&prId=' + ${prId}" th:text="#{act_2}"> </a>
             </td>

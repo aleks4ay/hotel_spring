@@ -14,11 +14,15 @@ public class Room implements Serializable {
     @GeneratedValue
     private long id;
     @Column(name = "number", unique = true)
-    private Integer number;
+    private int number;
+
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private Category category;
     private int guests;
     private String description;
     private double price;
+    private String imgName;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
     private List<Schedule> schedules;
@@ -26,12 +30,13 @@ public class Room implements Serializable {
     public Room() {
     }
 
-    public Room(Integer number, Category category, int guests, String description, double price) {
+    public Room(int number, Category category, int guests, String description, double price, String imgName) {
         this.number = number;
         this.category = category;
         this.guests = guests;
         this.description = description;
         this.price = price;
+        this.imgName = imgName;
     }
 
     public long getId() {
@@ -82,6 +87,14 @@ public class Room implements Serializable {
         this.price = price;
     }
 
+    public String getImgName() {
+        return imgName;
+    }
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
+
     public boolean isEmpty(LocalDate start, LocalDate end) {
         for (Schedule t : schedules) {
             if (!start.isBefore(t.getArrival()) && !start.isAfter(t.getDeparture())
@@ -122,6 +135,7 @@ public class Room implements Serializable {
                 ", category=" + category +
                 ", guests=" + guests +
                 ", description='" + description + '\'' +
+                ", imgName=" + imgName +
                 ", price=" + price +
                 '}';
     }

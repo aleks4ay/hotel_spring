@@ -3,8 +3,9 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head th:insert="~{fragments/header :: head}"/>
 
-<body>
+<body class="login">
     <div class="center1">
+        <h1>Log in</h1>
         <form class="inner_logo" method="post" th:action="@{/login}" th:object="${user}" >
             <div class="mb-3">
                 <label for="login1" class="form-label"> Login </label>

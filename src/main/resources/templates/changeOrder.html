@@ -10,12 +10,12 @@
     <div class="row">
 
 
-        <div class="col-sm-3">
-
+        <div class="col-sm-4">
+            <img style="width: 100%" th:src="${'/static/img/' + order.schedule.room.imgName}"/> </td>
         </div>
 
 
-        <div class="col-sm-6">
+        <div class="col-sm-5">
             <form method="post" th:action="@{/user/account/changeOrder}" >
                 <h2> [[#{blank2}]][[${order.id}]] </h2>
                 <h3 th:if="${noMoneyMessage}" class="text-danger" th:text="#{noMoneyMessage}"></h3>

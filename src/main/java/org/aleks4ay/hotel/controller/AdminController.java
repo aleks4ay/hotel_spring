@@ -7,16 +7,18 @@ import org.aleks4ay.hotel.model.User;
 import org.aleks4ay.hotel.service.OrderService;
 import org.aleks4ay.hotel.service.RoomService;
 import org.aleks4ay.hotel.service.UserService;
+import org.aleks4ay.hotel.util.FileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +26,11 @@ import java.util.Optional;
 @Controller
 public class AdminController {
     private static final Logger log = LogManager.getLogger(AdminController.class);
-    private static final int POSITION_ON_PAGE = 3;
+    private static final int POSITION_ON_PAGE_ROOM = 4;
+    private static final int POSITION_ON_PAGE = 8;
+
+    @Value("${web.upload-path}")
+    private String uploadPath;
 
     @Autowired
     private RoomService roomService;
@@ -45,10 +51,11 @@ public class AdminController {
     public String getRoomPage(Map<String, Object> model, HttpServletRequest request) {
         int page = initPageAttributes(model, request);
         List<Room> roomList = roomService.getRooms(request);
-        roomList = roomService.doPagination(POSITION_ON_PAGE, page, roomList);
+        roomList = roomService.doPagination(POSITION_ON_PAGE_ROOM, page, roomList);
         model.put("rooms", roomList);
         model.put("categories", Category.values());
         model.put("action", "room");
+        model.put("itemOnPage", POSITION_ON_PAGE_ROOM);
         return "adminPage";
     }
 
@@ -58,13 +65,16 @@ public class AdminController {
         return "redirect:/admin/room";
     }
 
+//    @ResponseBody
     @PostMapping("/admin/newRoom")
     public String saveNewRoom(@ModelAttribute Room room, Map<String, Object> model, HttpServletRequest request) {
+        int page = initPageAttributes(model, request);
         if (room.getId() > 0L) {
             roomService.update(room);
             log.info("Was update Room '{}'", room);
-            return "redirect:/admin/room?pg=" + initPageAttributes(model, request);
+            return "redirect:/admin/room?pg=" + page;
         }
+
         int number = room.getNumber();
         String description = room.getDescription();
         Double price = room.getPrice();
@@ -82,7 +92,7 @@ public class AdminController {
         }
         roomService.save(room);
         log.info("Was save new Room '{}'", room);
-        return "redirect:/admin/room";
+        return "redirect:/admin/room?pg=" + page;
     }
 
 

@@ -36,6 +36,7 @@
             <th scope="col"> [[#{guests}]] </th>
             <th scope="col"> [[#{description}]] </th>
             <th scope="col"> [[#{price}]] </th>
+            <th scope="col"> [[#{photo}]] </th>
         </tr>
         </thead>
         <tbody>
@@ -49,6 +50,7 @@
                 <td th:text="${room.guests}"></td>
                 <td th:text="${room.description}"></td>
                 <td th:text="${room.price}"></td>
+                <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
                 <td th:test="${#httpServletRequest.remoteUser != Null}">
                     <a href="#" th:href="'/admin/room/change?id=' + ${room.id} + '&pg=' + ${pg}"> [[#{change}]] </a>
                 </td>
@@ -112,6 +114,7 @@
             <th scope="col"> [[#{guests}]] </th>
             <th scope="col"> [[#{description}]] </th>
             <th scope="col"> [[#{data_reg}]] </th>
+            <th scope="col"> [[#{photo}]] </th>
             <th scope="col"> [[#{price}]] </th>
             <!--<th scope="col"> [[#{act_4}]] </th>-->
         </tr>
@@ -131,6 +134,7 @@
             <td th:text="${order.schedule.room.guests}"></td>
             <td th:text="${order.schedule.room.description}"></td>
             <td th:text="${order.registeredStr}"></td>
+            <td> <img width="100px" th:src="${'/static/img/' + order.schedule.room.imgName}"/> </td>
             <td th:text="${order.correctPrice}"></td>
             <!--<td> <a href="#" th:href="'/admin/order/change?id=' + ${user.id}+ '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>-->
         </tr>
@@ -146,6 +150,7 @@
       style="background-color: rgba(96, 162, 218, 0.2);">
     <h3> [[#{new_room}]] </h3>
     <div class="mb-3">
+        <input type="hidden" name="pg" th:value="${pg}">
         <label for="field1" class="form-label"> [[#{number}]]:</label>
         <input type="number" class="form-control" id="field1"  name="number" required
                th:value="${oldNumber != null ? oldNumber :''}"/>
@@ -153,8 +158,8 @@
     </div>
     <div class="mb-3">
         <label for="field2" class="form-label"> Room category </label>
-        <select id="field2" name="category" class="col-md-12 form-control">
-            <option value="STANDARD">Select Category</option>
+        <select id="field2" name="category" class="col-md-12 form-control" required>
+            <!--<option>Select Category</option>-->
             <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
         </select>
     </div>
@@ -167,7 +172,6 @@
             <option value="4"> 4 </option>
         </select>
     </div>
-
     <div class="mb-3">
         <label for="field4" class="form-label"> [[#{description}]]: </label>
         <input type="text" class="form-control" id="field4" name="description" required
@@ -177,6 +181,11 @@
         <label for="field5" class="form-label"> [[#{price}]]: </label>
         <input type="number" class="form-control" id="field5" name="price" required
                th:value="${oldPrice != null ? oldPrice :''}"/>
+    </div>
+
+    <div class="custom-file">
+        <label class="custom-file-label" for="customFile" ></label>
+        <input type="file" name="imgName" class="custom-file-input" id="customFile"/>
     </div>
 
     <div >

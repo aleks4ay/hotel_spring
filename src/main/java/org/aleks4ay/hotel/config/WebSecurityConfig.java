@@ -30,8 +30,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/manager/**").hasRole("MANAGER")
+                .antMatchers("/user/account/**").hasRole("USER")
                 .antMatchers("/registration", "/login").anonymous()
-                .antMatchers("/", "/home", "/shop", "/shop*//**", "/cart", "/logout", "/static*//**", "/activate*//*").permitAll()  //allow full access to all users there
+                .antMatchers("/", "/index", "/logout", "/static*//**").permitAll()  //allow full access to all users there
                 .anyRequest().permitAll()
             .and()
                 .formLogin()

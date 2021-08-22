@@ -19,6 +19,7 @@ public class OrderDto {
     private LocalDate arrival;
     private LocalDate departure;
     private double correctPrice;
+    private String imgName;
 
     public int getPeriod() {
         return (int) getArrival().until(getDeparture(), ChronoUnit.DAYS);
