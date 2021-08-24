@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class UtilService<T> {
 
-    public List<T> doPagination(int positionOnPage, int page, List<T> entities) {
+    List<T> doPagination(int positionOnPage, int page, List<T> entities) {
         int startPosition = positionOnPage * (page - 1);
         List<T> roomsAfterFilter = new ArrayList<>();
 

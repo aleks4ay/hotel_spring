@@ -29,19 +29,19 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr  th:each="room,step : ${rooms}">
+                <tr  th:each="item,step : ${rooms}">
                     <td scope="row">
-                        <input type="hidden" value="#" th:value="${room.id}"/>
+                        <input type="hidden" value="#" th:value="${item.id}"/>
                         <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
                     </td>
-                    <td th:text="${room.number}"></td>
-                    <td th:text="${room.category.title}"></td>
-                    <td th:text="${room.guests}"></td>
-                    <td th:text="${room.description}"></td>
-                    <td th:text="${room.price}"></td>
-                    <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
-                    <td th:test="${#httpServletRequest.remoteUser != Null}">
-                        <a href="#" th:href="'/admin/room/change?id=' + ${room.id} + '&pg=' + ${pg}"> [[#{change}]] </a>
+                    <td th:text="${item.number}"></td>
+                    <td th:text="${item.category.title}"></td>
+                    <td th:text="${item.guests}"></td>
+                    <td th:text="${item.description}"></td>
+                    <td th:text="${item.price}"></td>
+                    <td> <img width="200px" th:src="${'/static/img/'+item.imgName}"/> </td>
+                    <td th:test="${#httpServletRequest.remoteUser != null}">
+                        <a href="#" th:href="'/admin/room/change?id=' + ${item.id} + '&pg=' + ${pg}"> [[#{change}]] </a>
                     </td>
                 </tr>
                 </tbody>
@@ -55,9 +55,10 @@
 
 
         <div class="col-sm-2">
+            <!--/*@thymesVar id="room" type="org.aleks4ay.hotel.model.Room"*/-->
             <form  th:fragment="newroom" class="sticky rounded-lg shadow p-4 mb-4"
                    th:object="${room}" method="post" th:action="@{/admin/newRoom}"
-                   style="background-color: rgba(96, 162, 218, 0.2);">
+                   enctype="multipart/form-data" style="background-color: rgba(96, 162, 218, 0.2);">
                 <h3> [[#{new_room}]] </h3>
                 <div class="mb-3">
                     <input type="hidden" name="pg" th:value="${pg}">
@@ -92,9 +93,9 @@
                            th:value="${oldPrice != null ? oldPrice :''}"/>
                 </div>
 
-                <div class="custom-file">
-                    <label class="custom-file-label" for="customFile" ></label>
-                    <input type="file" name="imgName" class="custom-file-input" id="customFile" th:value="${imgName}"/>
+                <div class="custom-file mb-3">
+                    <label class="custom-file-label" for="inputFile04" id="lab1" ></label>
+                    <input type="file" name="image" class="custom-file-input" id="inputFile04" onchange="changeImage()" required/>
                 </div>
 
                 <div >
@@ -107,4 +108,7 @@
 
 <div th:insert="~{fragments/header :: footer}"> </div>
 </body>
+<script>
+    var changeImage = function () { lab1.innerHTML = inputFile04.value.split('fakepath\\')[1]; };
+</script>
 </html>

@@ -28,7 +28,7 @@
                 <li class="nav-item">
                     <a class="nav-link gap-item" th:href="@{/}" th:text="#{home}" >  </a>
                 </li>
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null or #httpServletRequest.isUserInRole('USER')}">
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == null or #httpServletRequest.isUserInRole('USER')}">
                     <a class="nav-link gap-item" th:href="@{/user/room}"> [[#{booking}]] </a>
                 </li>
 
@@ -50,16 +50,16 @@
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
                     <a class="nav-link gap-item" th:href="@{/manager/room}"> [[#{adm_act_2}]] </a>
                 </li>
-                <!--<li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">-->
-                    <!--<a class="nav-link gap-item" th:href="@{/manager/proposal}"> [[#{proposal}]] </a>-->
-                <!--</li>-->
                 <li class="nav-item" th:if="${#httpServletRequest.isUserInRole('MANAGER')}">
                     <a class="nav-link gap-item" th:href="@{/manager/order}"> [[#{adm_act_3}]] </a>
                 </li>
 
             </ul>
 
-            <ul class="navbar-nav" th:with="idRoom=(${param.id != null ? '&id='+param.id[0] : ''})" style="font-size: 1.2rem; align-items: flex-end">
+            <ul class="navbar-nav" th:with="idRoom=(${param.id != null ? '&id='+param.id[0] : ''}),
+                    oldParam=(${#httpServletRequest.queryString == null ? '' : '&' + #httpServletRequest.queryString}),
+                    oldParam=(${ #strings.replace( #strings.replace(oldParam, '&locale=ru', ''), '&locale=en', '' ) })"
+                style="font-size: 1.2rem; align-items: flex-end">
                 <li>
                     <label style="color: rgba(60, 189, 234, 0.54)" th:if="${#httpServletRequest.remoteUser}"
                            th:text="${' '+#request.userPrincipal.principal.name+' '}">
@@ -82,13 +82,12 @@
                     &nbsp;&nbsp;&nbsp;
                 </li>
 
-
                 <li class="nav-item" >
-                    <a class="nav-link"  th:href="${#httpServletRequest.requestURI + '?locale=ru' + idRoom}"
+                    <a class="nav-link"  th:href="${#httpServletRequest.requestURI + '?locale=ru' + oldParam}"
                        th:style="${#locale.language.toString()=='ru' ? 'color: #d54d38' : ''}"> RU </a>
                 </li>
                 <li class="nav-item">
-                    <a  class="nav-link" th:href="${#httpServletRequest.requestURI + '?locale=en' + idRoom}"
+                    <a  class="nav-link" th:href="${#httpServletRequest.requestURI + '?locale=en' + oldParam}"
                         th:style="${#locale.language.toString()=='en' ? 'color: #d54d38' : ''}" > EN </a>
                 </li>
 
@@ -102,10 +101,10 @@
                         <input type="submit" th:value="#{logoutNow}" class="btn btn-outline-success my-2 my-sm-0"/>
                     </form>
                 </li>
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == null}">
                     <a class="nav-link" th:href="@{/login}" th:text="#{loginNow}">  </a>
                 </li>
-                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == Null}">
+                <li class="nav-item" th:if="${#httpServletRequest.remoteUser == null}">
                     <a class="nav-link" th:href="@{/registration}" th:text="#{registration}"> </a>
                 </li>
 

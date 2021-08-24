@@ -6,47 +6,6 @@
 </head>
 <body>
 
-<!-- *******************  U S E R   leftForm  *********************  -->
-<!--<form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
-       style="height:700px; height: 350px; background-color: rgba(96, 162, 218, 0.2);">
-    <h4 th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}" />
-</form>-->
-
-
-<!-- *******************  U S E R   dateField  and sorting *********************  -->
-
-<!--<form th:fragment="dateField" th:with="command=${userType == 'guest' ? 'user' : userType}"
-      method="post" th:action="${'/' + command + '/room/date'}">
-    <div class="btn-group">
-        <div class="mb-3 date-item">
-            <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
-            <input type="date" class="form-control" id="dateStart"  name="arrival" th:value="${arrival}"
-                   th:disabled="${action=='manageProposal'}"/>
-        </div>
-        <div class="mb-3 date-item">
-            <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
-            <input type="date" class="form-control" id="dateEnd" name="departure" th:value="${departure}"
-                   th:disabled="${action=='manageProposal'}"/>
-        </div>
-        <div th:if="${action != 'manageProposal'}">
-            <button type="submit" class="btn btn-outline-success" style="height: 4.2em">  [[#{dateEnter}]]  </button>
-        </div>
-
-        <div th:if="${action == 'manageProposal'}" class="mb-3 date-item" >
-            <label for="cat11" class="form-label"> [[#{category}]]: </label>
-            <input type="text" class="form-control" id="cat11"  name="category" th:value="${category}" disabled/>
-        </div>
-        <div th:if="${action == 'manageProposal'}" class="mb-3 date-item" >
-            <label for="guests11" class="form-label"> [[#{guests}]]: </label>
-            <input type="text" class="form-control" id="guests11"  name="guests" th:value="${guests}" disabled/>
-        </div>
-
-    </div>
-</form>-->
-
-
-
-
 <!-- *******************  U S E R   sorting  ********************* -->
 <form th:fragment="sorting" th:with="command=${userType == 'guest' ? 'user' : userType}"
       method="post" th:action="${#httpServletRequest.requestURI + '/sort'}">
@@ -62,15 +21,6 @@
 
     </div>
 </form>
-<!--
-
-
-
-<!-- *******************  U S E R   bill  *********************  -->
-
-
-
-
 
 </body>
 </html>

@@ -16,7 +16,7 @@ import java.util.Map;
 public class RegistrationController {
     private static final Logger log = LogManager.getLogger(RegistrationController.class);
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public RegistrationController(UserService userService) {

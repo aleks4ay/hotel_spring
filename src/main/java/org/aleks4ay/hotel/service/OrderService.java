@@ -6,12 +6,14 @@ import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.OrderRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -19,8 +21,8 @@ import java.util.Optional;
 @Service
 public class OrderService {
 
-    private OrderRepo orderRepo;
-    private RoomService roomService;
+    private final OrderRepo orderRepo;
+    private final RoomService roomService;
 
     @Autowired
     public OrderService(OrderRepo orderRepo, RoomService roomService) {
@@ -66,6 +68,13 @@ public class OrderService {
             throw new NotEmptyRoomException("This room is occupied during this period!");
         }
         return orderRepo.save(order);
+    }
+
+    @Transactional
+    public void setCancelInvoice() {
+        LocalDateTime canceledDate = LocalDateTime.now().minusDays(2);
+        orderRepo.updateInvoiceStatusByOldRegistered(Timestamp.valueOf(canceledDate));
+        orderRepo.updateAllOrderStatusIfInvoiceCancel();
     }
 
     public Order saveOrderProposal(OrderDto dto, User user) {

@@ -21,8 +21,8 @@ class ManagerController {
     private static final int POSITION_ON_PAGE_ROOM = 3;
     private static final int POSITION_ON_PAGE = 6;
 
-    private RoomService roomService;
-    private OrderService orderService;
+    private final RoomService roomService;
+    private final OrderService orderService;
 
     @Autowired
     public ManagerController(RoomService roomService, OrderService orderService) {
@@ -32,7 +32,7 @@ class ManagerController {
 
     @GetMapping("/manager")
     public String getUserPage(Map<String, Object> model) {
-        return "redirect:/manager/proposal";
+        return "redirect:/manager/order";
     }
 
     @GetMapping("/manager/order")

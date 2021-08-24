@@ -16,23 +16,23 @@ import java.util.Map;
 
 @Controller
 public class AdminController {
-    private static final Logger log = LogManager.getLogger(AdminController.class);
-    private static final int POSITION_ON_PAGE_ROOM = 3;
-    private static final int POSITION_ON_PAGE = 6;
 
     @Value("${uploadPath}")
     private String uploadPath;
 
-    private RoomService roomService;
-    private OrderService orderService;
-    private UserService userService;
+    private static final Logger log = LogManager.getLogger(AdminController.class);
+    private static final int POSITION_ON_PAGE_ROOM = 3;
+    private static final int POSITION_ON_PAGE = 6;
+
+    private final RoomService roomService;
+    private final OrderService orderService;
+    private final UserService userService;
 
     public AdminController(RoomService roomService, OrderService orderService, UserService userService) {
         this.roomService = roomService;
         this.orderService = orderService;
         this.userService = userService;
     }
-
 
     @GetMapping("/admin")
     public String getUserPage(Map<String, Object> model) {
@@ -50,7 +50,6 @@ public class AdminController {
         return "a_room";
     }
 
-
     @GetMapping("/admin/newRoom")
     public String newRoom(@ModelAttribute Room room) {
         return "redirect:/admin/room";
@@ -59,6 +58,8 @@ public class AdminController {
     @PostMapping("/admin/newRoom")
     public String saveNewRoom(@ModelAttribute Room room, Map<String, Object> model, HttpServletRequest request) {
         try {
+            String imageName = Utils.saveImage(request, room.getNumber(), uploadPath);
+            room.setImgName(imageName);
             roomService.save(room);
             String startLog = room.getId() > 0L ? "update" : "save new";
             log.info("Was {} Room '{}'", startLog, room);

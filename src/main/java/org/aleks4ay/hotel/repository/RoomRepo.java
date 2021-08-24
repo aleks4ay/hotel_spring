@@ -19,17 +19,20 @@ public interface RoomRepo extends JpaRepository<Room, Long> {
 
 
     @Query(value = "select r.* from room r WHERE r.id NOT IN (" +
-            "select DISTINCT x.room_id from order_room x INNER JOIN orders o on x.order_id = o.id AND (" +
-            "(?1 BETWEEN o.arrival and o.departure) " +
-            "or (?2 BETWEEN o.arrival and o.departure) " +
-            "or (o.arrival BETWEEN ?1 and ?2)))",
+            "select DISTINCT x.room_id from order_room x INNER JOIN orders o on x.order_id = o.id " +
+            "and o.status < 4 " +
+            "and (    (?1 BETWEEN o.arrival and o.departure) " +
+            "      or (?2 BETWEEN o.arrival and o.departure) " +
+            "      or (o.arrival BETWEEN ?1 and ?2))" +
+            ")",
             nativeQuery = true)
     List<Room> findEmptyRoom(Date start, Date end);
 
 
     @Query(value = "select r.* from room r WHERE r.id NOT IN (" +
-            "select DISTINCT x.room_id from order_room x INNER JOIN orders o on x.order_id = o.id AND " +
-            "(?1 BETWEEN o.arrival and o.departure))",
+            "select DISTINCT x.room_id from order_room x INNER JOIN orders o on x.order_id = o.id " +
+            "           and o.status != 'CANCEL' and o.status != 'NEW' AND " +
+            " ?1 BETWEEN o.arrival and o.departure)",
             nativeQuery = true)
     List<Room> findEmptyRoom(Date start);
 }

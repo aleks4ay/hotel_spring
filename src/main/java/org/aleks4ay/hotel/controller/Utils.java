@@ -3,8 +3,9 @@ package org.aleks4ay.hotel.controller;
 import org.aleks4ay.hotel.model.Category;
 import org.aleks4ay.hotel.model.Order;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletException;
+import javax.servlet.http.*;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -90,8 +91,37 @@ class Utils {
         session.setAttribute("category", order.getCategory());
     }
 
-    public static LocalDate getDate(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(date, formatter);
+    public static String saveImage(HttpServletRequest request, int number, String path) {
+        String newFileName = "";
+        Part filePart;
+        try {
+            filePart = request.getPart("image");
+            String[] elements = filePart.getSubmittedFileName().split("\\.");
+            String fileExtension = elements[elements.length - 1].toLowerCase();
+            newFileName = getEmptyFileName(path, number + "." + fileExtension);
+            InputStream is = filePart.getInputStream();
+            byte[] buffer = new byte[is.available()];
+            OutputStream os = new FileOutputStream(path + newFileName);
+            is.read(buffer, 0, buffer.length);
+            os.write(buffer, 0, buffer.length);
+            is.close();
+            os.close();
+        } catch (IOException | ServletException e) {
+            e.printStackTrace();
+        }
+        return newFileName;
+    }
+
+    private static String getEmptyFileName(String imagePath, String fileName) {
+        File oldFile = new File(imagePath + fileName);
+        if (oldFile.exists()) {
+            for (int i = 1; ; i++) {
+                String newName = fileName.replaceFirst("\\.", "(" + i + ").");
+                if (! new File(imagePath + newName).exists()) {
+                    return newName;
+                }
+            }
+        }
+        return fileName;
     }
 }

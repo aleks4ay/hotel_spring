@@ -6,28 +6,27 @@
 <div th:insert="~{fragments/header :: navbar}"> </div>
 
 
-<div class="container-fluid" style="margin-top:10px">
+<div class="container-fluid mt-3">
     <div class="row">
 
 
         <div class="col-sm-4">
-            <img th:if="${order.room}" style="width: 100%" th:src="${'/static/img/' + order.room.imgName}"/> </td>
+            <img class="w-100" th:if="${order.room}" th:src="${'/static/img/' + order.room.imgName}"/>
         </div>
 
 
         <div class="col-sm-4">
             <form method="post" th:action="@{/user/account/changeOrder}" >
                 <h2> [[#{blank2}]][[${order.id}]] </h2>
-                <!--<h3 th:if="${noMoneyMessage}" class="text-danger" th:text="#{noMoneyMessage}"></h3>-->
 
                 <div>
                     <input type="hidden" name="id" th:value="${order.id}"/>
 
                     <h4>[[#{statusOrd}]]: [[${order.status}]]</h4>
                     <p>[[#{data_reg}]]: [[${order.registeredStr}]]</p>
-                    <h5>[[#{arrival}]]: [[${order.arrival}]]</h5>
+                    <p>[[#{arrival}]]: [[${order.arrival}]]</p>
                     <p>[[#{departure}]]: [[${order.departure}]]</p>
-                    <p  th:if="${order.room}" >[[#{roomNumber}]]: [[${order.room.number}]]</p>
+                    <h5  th:if="${order.room}" >[[#{roomNumber}]]: [[${order.room.number}]]</h5>
                     <p>[[#{category}]]: [[${order.category.title}]]</p>
                     <p>[[#{guestsQuantity}]]: [[${order.guests}]]</p>
                     <p th:if="${order.room}" >[[#{description}]]: [[${order.room.description}]]</p>
@@ -36,7 +35,7 @@
                 </div>
 
 
-                <div class="btn-group" style="width: 100%">
+                <div class="btn-group w-100">
                     <button type="submit" th:if="${order.status.toString()=='BOOKED'}" class="btn btn-primary btn-my-r"
                             name="changeStatus" value="confirm"> [[#{act_5}]] </button>
                 </div>
@@ -44,7 +43,7 @@
             <hr>
 
             <form method="get" th:action="@{/user/account/order}" >
-                <div class="btn-group" style="width: 100%">
+                <div class="btn-group w-100">
                     <input type="submit" class="btn btn-primary btn-my-r" th:value="#{returnToOrder}"/>
                 </div>
             </form>
@@ -76,11 +75,14 @@
                     <h3>[[#{cost}]]: [[${order.invoice.cost}]] [[#{currency}]] </h3>
                 </div>
 
-
-                <div class="btn-group" style="width: 100%">
-                    <button type="submit" th:if="${order.status.toString()=='CONFIRMED'}" class="btn btn-primary btn-my-r"
-                            name="changeStatus" value="pay"> [[#{act_6}]] </button>
-                </div>
+                <button type="submit" th:if="${noMoneyMessage == null and order.status.toString()=='CONFIRMED'}"
+                        class="btn btn-primary btn-my-r w-100"
+                        name="changeStatus" value="pay"> [[#{act_6}]]
+                </button>
+                <button type="button" th:if="${noMoneyMessage}" class="btn btn-primary btn-my-r w-100"
+                        th:onclick="@{'window.location=\'/user/account/bill\''}"
+                        name="changeStatus" value="pay"> [[#{addBill}]]
+                </button>
             </form>
         </div>
 

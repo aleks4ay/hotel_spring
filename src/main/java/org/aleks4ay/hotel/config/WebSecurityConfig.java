@@ -2,9 +2,7 @@ package org.aleks4ay.hotel.config;
 
 import org.aleks4ay.hotel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,18 +35,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/manager/**").hasRole("MANAGER")
                 .antMatchers("/user/account/**").hasRole("USER")
                 .antMatchers("/registration", "/login").anonymous()
-                .antMatchers("/", "/index", "/logout", "/static*//**").permitAll()  //allow full access to all users there
+                .antMatchers("/", "/index", "/logout", "/static*//**").permitAll() //allow full access to all users there
                 .anyRequest().permitAll()
-                .and()
+            .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
-                .and()
+            .and()
                 .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/");
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .deleteCookies("JSESSIONID")
+                    .logoutSuccessUrl("/");
     }
 
     @Autowired
@@ -56,3 +54,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 }
+
+
+
+
+
+
+
+

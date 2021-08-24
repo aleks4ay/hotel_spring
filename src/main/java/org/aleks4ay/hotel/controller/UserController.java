@@ -24,10 +24,10 @@ class UserController {
     private static final int POSITION_ON_PAGE_ROOM = 3;
     private static final int POSITION_ON_PAGE = 6;
 
-    private RoomService roomService;
-    private OrderService orderService;
-    private UserService userService;
-    private InvoiceService invoiceService;
+    private final RoomService roomService;
+    private final OrderService orderService;
+    private final UserService userService;
+    private final InvoiceService invoiceService;
 
     @Autowired
     public UserController(RoomService roomService, OrderService orderService,
@@ -68,7 +68,6 @@ class UserController {
         model.put("orderDto", orderService.createOrderDto(request, roomService.getById(id)));
         return "u_newOrder";
     }
-
 
     @PostMapping("user/account/newProposal")
     public String saveNewProposal(@ModelAttribute OrderDto orderDto, HttpServletRequest request) {
@@ -140,7 +139,6 @@ class UserController {
         model.put("bill", user.getBill());
         return "u_bill";
     }
-
 
     @PostMapping("/user/account/changeBill")
     public String doChangeBill(@AuthenticationPrincipal User user, @RequestParam int addBill) {

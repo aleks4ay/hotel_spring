@@ -4,6 +4,7 @@ import org.aleks4ay.hotel.exception.AlreadyException;
 import org.aleks4ay.hotel.exception.NotFoundException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.RoomRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,10 @@ import static java.util.Comparator.comparing;
 
 @Service
 public class RoomService {
-    private RoomRepo roomRepo;
 
+    private final RoomRepo roomRepo;
+
+    @Autowired
     public RoomService(RoomRepo roomRepo) {
         this.roomRepo = roomRepo;
     }

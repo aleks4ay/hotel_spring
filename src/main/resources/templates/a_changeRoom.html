@@ -16,9 +16,9 @@
 
         <div class="col-sm-8">
 
-            <form  th:fragment="newroom" class="sticky rounded-lg shadow p-4 mb-4"
+            <form class="sticky rounded-lg shadow p-4 mb-4"
                    th:object="${room}" method="post" th:action="@{/admin/newRoom}"
-                   style="background-color: rgba(96, 162, 218, 0.2);">
+                  enctype="multipart/form-data" style="background-color: rgba(96, 162, 218, 0.2);">
                 <div class="mb-3">
                     <input type="hidden" name="id" th:value="${room.id}"/>
                     <input type="hidden" name="pg" th:value="${pg}"/>
@@ -56,6 +56,10 @@
                     <input type="number" class="form-control" id="field5" name="price" required
                            th:value="${room.price}"/>
                 </div>
+                <div class="custom-file mb-3">
+                    <label class="custom-file-label" for="inputFile04" id="lab1" th:text="${room.imgName}"></label>
+                    <input type="file" name="image" class="custom-file-input" id="inputFile04" onchange="changeImage()" required/>
+                </div>
 
                 <div >
                     <button type="submit" class="btn btn-outline-success" > [[#{save}]] </button>
@@ -72,4 +76,7 @@
 
 <div th:insert="~{fragments/header :: footer}"> </div>
 </body>
+<script>
+    var changeImage = function () { lab1.innerHTML = inputFile04.value.split('fakepath\\')[1]; };
+</script>
 </html>
