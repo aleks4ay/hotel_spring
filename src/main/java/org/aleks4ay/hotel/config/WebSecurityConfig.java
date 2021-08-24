@@ -18,8 +18,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @ComponentScan("org.aleks4ay.hotel")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,24 +39,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration", "/login").anonymous()
                 .antMatchers("/", "/index", "/logout", "/static*//**").permitAll()  //allow full access to all users there
                 .anyRequest().permitAll()
-            .and()
+                .and()
                 .formLogin()
-                .loginPage("/login")
-//                .usernameParameter("login")
-//                .failureUrl("/login?error=true")
-                .permitAll()
-//            .and()
-//                .rememberMe()
-//            .and()
-//                .exceptionHandling()
-//                .accessDeniedPage("/home")
-            .and()
+                .loginPage("/login").permitAll()
+                .and()
                 .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
-                    .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .deleteCookies("JSESSIONID")
-                    .logoutSuccessUrl("/");
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/");
     }
 
     @Autowired
@@ -60,11 +56,3 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 }
-
-
-
-
-
-
-
-

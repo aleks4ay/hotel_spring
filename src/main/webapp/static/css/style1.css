@@ -3,11 +3,10 @@
       padding: 0;
       display: table;
       width: 100%; 
-      /*background-image: url(/static/img/header.jpg);*/
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
-      height: 300px;  /* Высота шапки */
+      height: 300px;
 }
 
 .btn-my-r {
@@ -65,12 +64,7 @@
     margin-bottom: auto;
 }
 
-.middle { /* vertical align */
-    /*    margin: 0;
-        position: absolute;
-        top: 50%;
-        transform: translate(0, -50%);*/
-}
+
 
 body {
     background: rgba(35, 35, 104, 0.09);
@@ -85,14 +79,42 @@ body.login{
 
 .center1 {
     width: 420px;
-    /*margin: 0;*/
     position: absolute;
     top: 50%;
     left: 50%;
-    /*margin-right: -50%;*/
     transform: translate(-50%, -50%)
 }
 
 .msg-danger {
     color: #d54d38;
+}
+
+.paid-item{
+    font-size:24px;
+    text-align: center;
+    padding: 0.5em;
+}
+.paid{
+    color: #3b6696;
+    border:  solid 3px #3b6696;
+}
+.oldPaid{
+    color: #d54d38;
+    border:  solid 3px #d54d38;
+}
+.rotate1{
+    display: flex;
+    justify-content: center;
+    width: 30%;
+    margin-left: 50%;
+    border-radius: 10px;
+    transform:rotate(-15deg);
+}
+
+.good{
+    color: cornflowerblue;
+    font-weight: bold;
+}
+.emptyClass{
+
 }

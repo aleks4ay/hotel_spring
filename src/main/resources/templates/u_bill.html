@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+            <div>  <h1> [[#{account}]]  </h1> </div>
+        </div>
+
+
+        <div class="col-sm-8">
+
+            <div th:insert="~{fragments/u_menu :: menu}"   class="btn-group" style="width: 100%"> </div>
+
+
+            <div th:fragment="bill">
+                <h2> [[#{bill}]] </h2>
+                <form  class="sticky rounded-lg shadow p-4 mb-4" method="post" th:action="@{/user/account/changeBill}"
+                       style="background-color: rgba(96, 162, 218, 0.2);">
+                    <h4> [[#{bill2}]]: [[${bill}]] [[#{currency}]] </h4>
+                    <div class="mb-3">
+                        <label for="bill1" class="form-label"> [[#{sum}]]: </label>
+                        <input type="number" class="form-control" id="bill1"  name="addBill" style="width: 40%" required/>
+                    </div>
+                    <div >
+                        <button type="submit" class="btn btn-outline-success" >  [[#{addBill}]] </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

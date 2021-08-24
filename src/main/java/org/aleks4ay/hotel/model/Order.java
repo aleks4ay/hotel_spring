@@ -1,95 +1,82 @@
 package org.aleks4ay.hotel.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order implements Serializable {
 
     @Id
     @GeneratedValue
     private long id;
-    private LocalDateTime registered = LocalDateTime.now();
-    private double correctPrice;
 
+    private LocalDate arrival;
+    private LocalDate departure;
+    private int period;
+    private int guests;
     @Enumerated(EnumType.STRING)
+    private Category category;
+    private LocalDateTime registered = LocalDateTime.now();
+
+    @Column(name = "correct_price", precision = 12, scale = 2)
+    private long correctPrice;
+
     @Column(name = "status")
     private Status status;
 
-//    private Room room;
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "schedule_id")
-    private Schedule schedule;
 
-    public Order() {
-    }
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "order_room",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private Room room;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-//    public Room getRoom() {
-//        return room;
-//    }
-/*
-    public void setRoom(Room room) {
+    public void setRoomDeeply(Room room) {
         this.room = room;
         this.correctPrice = room.getPrice();
-    }*/
-
-    public Schedule getSchedule() {
-        return schedule;
+        room.addOrder(this);
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
-        this.correctPrice = schedule.getRoom().getPrice();
-    }
 
-    public LocalDateTime getRegistered() {
-        return registered;
-    }
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "order_invoice",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "invoice_id")
+    )
+    private Invoice invoice;
 
-    public void setRegistered(LocalDateTime registered) {
+
+    public Order(LocalDate arrival, LocalDate departure, int guests, Category category,
+                 LocalDateTime registered, long correctPrice) {
+        this.arrival = arrival;
+        this.departure = departure;
+        this.period = (int) this.arrival.until(this.departure, ChronoUnit.DAYS);
+        this.guests = guests;
+        this.category = category;
         this.registered = registered;
+        this.correctPrice = correctPrice;
     }
 
-    public Status getStatus() {
-        return status;
-    }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public double getCorrectPrice() {
-        return correctPrice;
-    }
-
-    public void setCorrectPrice(Double price) {
-        this.correctPrice = price;
-    }
-
-    public double getCost() {
-        return getCorrectPrice() * getSchedule().getPeriod();
+    public long getCost() {
+        return getCorrectPrice() * getPeriod();
     }
 
     public String getRegisteredStr() {
@@ -101,6 +88,11 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
+                ", arrival=" + arrival +
+                ", departure=" + departure +
+                ", period=" + period +
+                ", guests=" + guests +
+                ", category=" + category +
                 ", registered=" + registered +
                 ", correctPrice=" + correctPrice +
                 ", status=" + status +
@@ -110,9 +102,9 @@ public class Order {
 
     public enum Status {
         NEW,
+        BOOKED,
         CONFIRMED,
         PAID,
-        CANCELED,
-        COMPLETED
+        CANCEL
     }
 }

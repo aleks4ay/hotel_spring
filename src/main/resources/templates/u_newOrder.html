@@ -15,7 +15,7 @@
 
 
         <div class="col-sm-6">
-            <form method="post" th:action="@{/user/newOrder}" >
+            <form method="post" th:action="@{/user/account/newOrder}" th:object="${orderDto}">
                 <h2> [[#{blank}]]: </h2>
                 <h3 th:if="${roomOccupiedMessage}" class="text-danger" th:text="#{roomOccupiedMessage}"></h3>
 
@@ -27,12 +27,15 @@
 
                 <div>
                     <div class="mb-3">
-                        <label for="date3" class="form-label"> [[#{arrival}]]: </label>
-                        <input type="date" class="form-control" id="date3"  name="arrival" th:value="${orderDto.arrival}"/>
+                        <label for="dateStart" class="form-label"> [[#{arrival}]]: </label>
+                        <input type="date" class="form-control" id="dateStart"  name="arrivalString" th:value="${orderDto.arrival}"
+                               onchange="getCost()"/>
                     </div>
                     <div class="mb-3">
-                        <label for="date4" class="form-label"> [[#{departure}]]: </label>
-                        <input type="date" class="form-control" id="date4" name="departure" th:value="${orderDto.departure}"/>
+                        <label for="dateEnd" class="form-label"> [[#{departure}]]: </label>
+                        <input type="date" class="form-control" id="dateEnd" name="departureString" th:value="${orderDto.departure}"
+                               onchange="getCost()"/>
+                        <input type="hidden" id="price1" th:value="${orderDto.correctPrice}">
                     </div>
                     <input type="hidden" th:value="${orderDto.number}" name="number">
 
@@ -40,7 +43,7 @@
                     <p>[[#{category}]]: [[${orderDto.category}]]</p>
                     <p>[[#{guestsQuantity}]]: [[${orderDto.guests}]]</p>
                     <p>[[#{description}]]: [[${orderDto.description}]]</p>
-                    <h3> [[#{cost}]]: [[${orderDto.cost}]] [[#{currency}]] </h3>
+                    <h3> [[#{cost}]]: <span id="cost1">[[${orderDto.cost}]]</span> [[#{currency}]] </h3>
                 </div>
 
                 <div class="btn-group" style="width: 100%">
@@ -58,4 +61,16 @@
 
 <div th:insert="~{fragments/header :: footer}"> </div>
 </body>
+
+<script>
+    var getCost = function () {
+        var parts1 = dateStart.value.split('-');
+        var price = price1.value;
+        var start = new Date(parts1[0], parts1[1] - 1, parts1[2]);
+        var parts2 = dateEnd.value.split('-');
+        var end = new Date(parts2[0], parts2[1] - 1, parts2[2]);
+        cost1.innerHTML = dateStart.value == '' | dateEnd.value == '' ? '' : (end - start) / 86400000 * price + '.0';
+    };
+</script>
+
 </html>

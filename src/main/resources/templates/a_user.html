@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+
+        </div>
+
+
+        <div class="col-sm-8">
+
+            <div>
+                <h2> [[#{adm_act_1}]] </h2>
+                <table class="table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col"> [[#{n}]] </th>
+                        <th scope="col"> [[#{login}]] </th>
+                        <th scope="col"> [[#{firstName}]] </th>
+                        <th scope="col"> [[#{lastName}]] </th>
+                        <th scope="col"> Active </th>
+                        <th scope="col"> [[#{data_reg}]] </th>
+                        <th scope="col"> [[#{role}]] </th>
+                        <th scope="col"> [[#{act_4}]] </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  th:each="user,step : ${users}">
+                        <td scope="row">
+                            <input type="hidden" value="#" th:value="${user.id}"/>
+                            <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+                        </td>
+                        <td th:text="${user.login}"></td>
+                        <td th:text="${user.name}"></td>
+                        <td th:text="${user.surname}"></td>
+                        <td th:text="${user.active}"></td>
+                        <td th:text="${user.registeredStr}"></td>
+                        <td th:text="${user.mainRole.title}"></td>
+                        <td> <a href="#" th:href="'/admin/user/change?id=' + ${user.id} + '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <ul th:insert="~{fragments/header :: pagination}"> </ul>
+
+        </div>
+
+
+        <div class="col-sm-2">
+
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+
+        <div class="col-sm-4">
+            <img th:if="${order.room}" style="width: 100%" th:src="${'/static/img/' + order.room.imgName}"/> </td>
+        </div>
+
+
+        <div class="col-sm-4">
+            <form method="post" th:action="@{/user/account/changeOrder}" >
+                <h2> [[#{blank2}]][[${order.id}]] </h2>
+                <!--<h3 th:if="${noMoneyMessage}" class="text-danger" th:text="#{noMoneyMessage}"></h3>-->
+
+                <div>
+                    <input type="hidden" name="id" th:value="${order.id}"/>
+
+                    <h4>[[#{statusOrd}]]: [[${order.status}]]</h4>
+                    <p>[[#{data_reg}]]: [[${order.registeredStr}]]</p>
+                    <h5>[[#{arrival}]]: [[${order.arrival}]]</h5>
+                    <p>[[#{departure}]]: [[${order.departure}]]</p>
+                    <p  th:if="${order.room}" >[[#{roomNumber}]]: [[${order.room.number}]]</p>
+                    <p>[[#{category}]]: [[${order.category.title}]]</p>
+                    <p>[[#{guestsQuantity}]]: [[${order.guests}]]</p>
+                    <p th:if="${order.room}" >[[#{description}]]: [[${order.room.description}]]</p>
+                    <p th:if="${order.room}" >[[#{price}]]: [[${order.room.price}]]</p>
+                    <h3> [[#{cost}]]: [[${order.cost}]] [[#{currency}]] </h3>
+                </div>
+
+
+                <div class="btn-group" style="width: 100%">
+                    <button type="submit" th:if="${order.status.toString()=='BOOKED'}" class="btn btn-primary btn-my-r"
+                            name="changeStatus" value="confirm"> [[#{act_5}]] </button>
+                </div>
+            </form>
+            <hr>
+
+            <form method="get" th:action="@{/user/account/order}" >
+                <div class="btn-group" style="width: 100%">
+                    <input type="submit" class="btn btn-primary btn-my-r" th:value="#{returnToOrder}"/>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-sm-4">
+            <div class="rounded-lg shadow p-4 mb-4">
+                <h3> [[#{bill2}]]: [[${bill}]] [[#{currency}]] </h3>
+            </div>
+            <form method="post" class="rounded-lg shadow p-4 mb-4" th:action="@{/user/account/changeOrder}"
+                  th:if="${order.invoice}">
+                <h2> [[#{invoice}]] [[#{n}]][[${order.invoice.id}]] </h2>
+                <h3 th:if="${noMoneyMessage}" class="text-danger" th:text="#{noMoneyMessage}"></h3>
+
+                <div>
+                    <input type="hidden" name="id" th:value="${order.id}"/>
+
+                    <h5>[[#{data_reg2}]]: [[${order.invoice.registeredStr}]]</h5>
+                    <h5 th:if="${order.invoice.status.toString()=='NEW'}" style="color: #3b6696;">
+                        [[#{data_reg_end}]]: [[${order.invoice.endDateStr}]]
+                    </h5>
+                    <div class="rotate1 paid" th:if="${order.invoice.status.toString()=='PAID'}">
+                        <h3 class="paid-item" >[[#{paid}]]</h3>
+                    </div>
+                    <div class="rotate1 oldPaid" th:if="${order.invoice.status.toString()=='CANCEL'}">
+                        <h3 class="paid-item" >[[#{oldPaid}]]</h3>
+                    </div>
+                    <h3>[[#{cost}]]: [[${order.invoice.cost}]] [[#{currency}]] </h3>
+                </div>
+
+
+                <div class="btn-group" style="width: 100%">
+                    <button type="submit" th:if="${order.status.toString()=='CONFIRMED'}" class="btn btn-primary btn-my-r"
+                            name="changeStatus" value="pay"> [[#{act_6}]] </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

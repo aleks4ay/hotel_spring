@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+
+        </div>
+
+
+        <div class="col-sm-8">
+
+            <div th:fragment="orders">
+                <h2> [[#{adm_act_3}]] </h2>
+                <table class="table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col"> [[#{n}]] </th>
+                        <th scope="col"> [[#{name}]] </th>
+                        <th scope="col"> [[#{roomNumber}]] </th>
+                        <th scope="col"> [[#{arrival}]] </th>
+                        <th scope="col"> [[#{departure}]] </th>
+                        <th scope="col"> [[#{statusOrd}]] </th>
+                        <th scope="col"> [[#{cost_2}]] </th>
+                        <th scope="col"> [[#{photo}]] </th>
+                        <th scope="col"> [[#{detail}]] </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  th:each="order,step : ${orders}">
+                        <td scope="row">
+                            <input type="hidden" value="#" th:value="${order.id}"/>
+                            <span th:text="${order.id}"/>
+                        </td>
+                        <td th:text="${order.user.name}"></td>
+                        <td th:text="${order.room == null ? '-' : order.room.number}"></td>
+                        <td th:text="${order.arrival}"></td>
+                        <td th:text="${order.departure}"></td>
+                        <td th:text="${order.status}" th:classappend="${order.status.toString()=='NEW'} ? good : emptyClass"> </td>
+                        <td th:text="${order.cost}"></td>
+                        <td> <img th:if="${order.room}" width="100px" th:src="${'/static/img/' + order.room.imgName}"/> </td>
+                        <td> <a th:if="${order.status.toString()=='NEW'}"
+                                th:href="'/manager/room/order?ordId=' + ${order.id}"> [[#{processRequest}]] </a> </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <ul th:insert="~{fragments/header :: pagination}"> </ul>
+
+
+        </div>
+
+
+        <div class="col-sm-2">
+
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

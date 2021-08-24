@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:insert="~{fragments/header :: head}"/>
+<body>
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+
+        <div class="col-sm-2">
+            <div th:insert="~{fragments/filter :: filters}"> </div>
+        </div>
+
+        <div class="col-sm-8">
+
+            <div  th:fragment="rooms">
+                <h2> [[#{adm_act_2}]]  </h2>
+
+                <div class="btn-group">
+                    <div th:insert="~{fragments/sorting :: sorting}"> </div>
+                </div>
+
+                <table class="table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col"> [[#{n}]] </th>
+                        <th scope="col"> [[#{number}]] </th>
+                        <th scope="col"> [[#{category}]] </th>
+                        <th scope="col"> [[#{guests}]] </th>
+                        <th scope="col"> [[#{description}]] </th>
+                        <th scope="col"> [[#{price}]] </th>
+                        <th scope="col"> [[#{photo}]] </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="room,step : ${rooms}">
+                        <td scope="row">
+                            <input type="hidden" value="#" th:value="${room.id}"/>
+                            <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
+                        </td>
+                        <td th:text="${room.number}"></td>
+                        <td th:text="${room.category.title}"></td>
+                        <td th:text="${room.guests}"></td>
+                        <td th:text="${room.description}"></td>
+                        <td th:text="${room.price}"></td>
+                        <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
+                        <td th:if="${#httpServletRequest.remoteUser}">
+                            <a href="#" th:href="'/user/account/booking?id=' + ${room.id}" th:text="#{act_2}"> </a>
+                        </td>
+                        <td th:if="${#httpServletRequest.remoteUser == Null}" th:text="#{book_info1}"> </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <ul th:insert="~{fragments/header :: pagination}"> </ul>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-2">
+            <div th:if="${#httpServletRequest.isUserInRole('USER')}">
+
+                <form  method="post" th:action="@{/user/account/newProposal}" th:object="${orderDto}"
+                        class="sticky rounded-lg shadow p-4 mb-4" style="background-color: rgba(96, 162, 218, 0.2);">
+                    <div class="mb-3">
+                        <label for="date3" class="form-label"> [[#{arrival}]]: </label>
+                        <input type="date" class="form-control" id="date3"  name="arrivalString" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date4" class="form-label">  [[#{departure}]]: </label>
+                        <input type="date" class="form-control" id="date4" name="departureString" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="field11" class="form-label"> [[#{guests}]]: </label>
+                        <select id="field11" name="guests" class="col-md-12 form-control" required>
+                            <option value="1"> 1 </option>
+                            <option value="2"> 2 </option>
+                            <option value="3"> 3 </option>
+                            <option value="4"> 4 </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="field12" class="form-label"> [[#{category}]]: </label>
+                        <select id="field12" name="category" class="col-md-12 form-control" required>
+                            <option value="STANDARD">Select Category</option>
+                            <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
+                        </select>
+                    </div>
+
+
+                    <div >
+                        <div th:if="${#httpServletRequest.remoteUser}" >
+                            <button type="submit" class="btn btn-outline-success" th:disabled="false"> [[#{cart_2}]] </button>
+                        </div>
+                        <div th:if="${#httpServletRequest.remoteUser == null}">
+                            <button type="submit" class="btn btn-outline-success" th:disabled="true" >  [[#{cart_2}]] </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/header :: footer}"> </div>
+</body>
+</html>

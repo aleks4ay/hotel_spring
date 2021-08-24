@@ -1,109 +1,77 @@
 package org.aleks4ay.hotel.service;
 
+import org.aleks4ay.hotel.exception.AlreadyException;
 import org.aleks4ay.hotel.exception.NotFoundException;
-import org.aleks4ay.hotel.model.Category;
-import org.aleks4ay.hotel.model.Room;
-import org.aleks4ay.hotel.model.Schedule;
+import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.RoomRepo;
-import org.aleks4ay.hotel.repository.ScheduleRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
 @Service
-@Transactional(readOnly = true)
 public class RoomService {
-    @Autowired
     private RoomRepo roomRepo;
-    @Autowired
-    private ScheduleRepo scheduleRepo;
 
-    private static final Logger log = LogManager.getLogger(RoomService.class);
-
-    public Optional<Room> getById(Long id) {
-        return roomRepo.findById(id);
+    public RoomService(RoomRepo roomRepo) {
+        this.roomRepo = roomRepo;
     }
 
-    public Optional<Room> getByNumber(int number) {
-        return roomRepo.findByNumber(number);
+    public Room getById(Long id) {
+        return roomRepo.findById(id).orElseThrow(() -> new NotFoundException("Room with id=" + id + "not found"));
     }
 
-    public List<Room> getAll() {
-        return (List<Room>) roomRepo.findAll();
+    public Room getByNumber(int number) {
+        return roomRepo.findByNumber(number).orElseThrow(() -> new NotFoundException("room #" + number + " not found"));
     }
 
-    public Map<Long, Room> getAllAsMap() {
-        List<Room> rooms = getAll();
-        Map<Long, Room> roomMap = new HashMap<>();
-        for (Room r : rooms) {
-            roomMap.put(r.getId(), r);
+
+    public Room save(Room room) {
+        try {
+            return roomRepo.save(room);
+        } catch (Exception e) {
+            throw new AlreadyException("Room with number #" + room.getNumber() + "already exists");
         }
-        return roomMap;
     }
 
-    public List<Room> getRooms(HttpServletRequest request) {
-        List<Room> roomList;
+    public Page<Room> findAll(int numPage, int rowsOnPage, String sortMethod) {
+        Pageable sortedPage = PageRequest.of(numPage, rowsOnPage, Sort.by(sortMethod));
+        return roomRepo.findAll(sortedPage);
+    }
+
+    public List<Room> getRoomsWithFilter(HttpServletRequest request) {
         Object categoryObj = request.getSession().getAttribute("category");
         Object guestsObj = request.getSession().getAttribute("guests");
         Object arrivalObj = request.getSession().getAttribute("arrival");
         Object departureObj = request.getSession().getAttribute("departure");
+        List<Room> rooms;
+        if (arrivalObj == null && departureObj == null) {
+            rooms = roomRepo.findAll();
+        } else if (departureObj == null) {
+            rooms = roomRepo.findEmptyRoom(Date.valueOf((LocalDate)arrivalObj));
+        } else if (arrivalObj == null) {
+            rooms = roomRepo.findEmptyRoom(Date.valueOf((LocalDate)departureObj));
+        } else {
+            rooms = roomRepo.findEmptyRoom(Date.valueOf((LocalDate) arrivalObj), Date.valueOf((LocalDate) departureObj));
+        }
 
         if (categoryObj != null) {
-            Category category = (Category)categoryObj;
-            if (guestsObj != null) {
-                int guests = (int) guestsObj;
-                roomList = getAllWithFilters(category, guests);
-            } else {
-                roomList = getAllWithFilters(category);
-            }
-        } else if (guestsObj != null) {
-            int guests = (int) guestsObj;
-            roomList = getAllWithFilters(guests);
-        } else {
-            roomList = getAll();
+            rooms = rooms.stream()
+                    .filter(room -> room.getCategory() == categoryObj)
+                    .collect(Collectors.toList());
         }
-        if (arrivalObj != null && departureObj == null) {
-            roomList = getRoomsWithDate((LocalDate)arrivalObj, roomList);
+        if (guestsObj != null) {
+            rooms = rooms.stream()
+                    .filter(room -> room.getGuests() == (int) guestsObj)
+                    .collect(Collectors.toList());
         }
-        if (arrivalObj == null && departureObj != null) {
-            roomList = getRoomsWithDate((LocalDate)departureObj, roomList);
-        }
-        if (arrivalObj != null && departureObj != null) {
-            roomList = getRoomsWithInterval((LocalDate)arrivalObj, (LocalDate)departureObj, roomList);
-        }
-        return roomList;
-    }
-
-    public List<Room> getRoomsWithDate(LocalDate localDate, List<Room> rooms) {
-        return getRoomsWithInterval(localDate, localDate, rooms);
-    }
-
-    public List<Room> getRoomsWithInterval(LocalDate arrival, LocalDate departure, List<Room> rooms) {
-        List<Room> result = new ArrayList<>();
-        for (Room room : rooms) {
-            boolean isEmpty = true;
-            for (Schedule s : room.getSchedules()) {
-                boolean isScheduleAfter = arrival.isBefore(s.getArrival()) && departure.isBefore(s.getArrival());
-                boolean isScheduleBefore = arrival.isAfter(s.getDeparture()) && departure.isAfter(s.getDeparture());
-                if ( !(isScheduleAfter || isScheduleBefore) ) {
-                    isEmpty = false;
-                    log.info("Room #{} is occupied from {} to {} and not might be able to booked from {} to {}",
-                            room.getNumber(), s.getArrival(), s.getDeparture(), arrival, departure);
-                }
-            }
-            if (isEmpty) {
-                result.add(room);
-            }
-        }
-        return result;
+        return rooms;
     }
 
     public List<Room> doPagination(int positionOnPage, int page, List<Room> entities) {
@@ -111,53 +79,27 @@ public class RoomService {
     }
 
 
-    @Transactional
-    public Room update(Room room) {
-        Optional<Room> optionalRoom = getById(room.getId());
-        if (!optionalRoom.isPresent()) {
-            throw new NotFoundException("Room with number: " + room.getNumber() + " not found");
-        }
-        Room roomFromDB = optionalRoom.get();
-        roomFromDB.setGuests(room.getGuests());
-        roomFromDB.setDescription(room.getDescription());
-        roomFromDB.setCategory(room.getCategory());
-        roomFromDB.setPrice(room.getPrice());
-        return roomRepo.save(roomFromDB);
-    }
-
-    public boolean checkNumber(int number) {
-        return roomRepo.findByNumber(number).isPresent();
-    }
-
-    @Transactional
-    public Room save(Room room) {
-        return roomRepo.save(room);
-    }
-
-    private List<Room> getAllWithFilters(Category category, int guests) {
-        return roomRepo.findAllByCategoryAndGuests(category, guests);
-    }
-
-    private List<Room> getAllWithFilters(Category category) {
-        return roomRepo.findAllByCategory(category);
-    }
-
-    private List<Room> getAllWithFilters(int guests) {
-        return roomRepo.findAllByGuests(guests);
-    }
-
-
-    public List<Room> setSorting(List<Room> rooms, HttpServletRequest request) {
-        String sortMethod = (String) request.getSession().getAttribute("sortMethod");
-        if (sortMethod.equalsIgnoreCase("byCategory")) {
+    public List<Room> setSorting(List<Room> rooms, String sortMethod) {
+        if (sortMethod.equalsIgnoreCase("category")) {
             rooms.sort(comparing(Room::getCategory));
-        } else if (sortMethod.equalsIgnoreCase("byPrice")) {
+        } else if (sortMethod.equalsIgnoreCase("price")) {
             rooms.sort(comparing(Room::getPrice));
-        } else if (sortMethod.equalsIgnoreCase("byGuests")) {
+        } else if (sortMethod.equalsIgnoreCase("guests")) {
             rooms.sort(comparing(Room::getGuests));
-        } else {
+        } else if (sortMethod.equalsIgnoreCase("number")) {
             rooms.sort(comparing(Room::getNumber));
+        } else {
+            rooms.sort(comparing(Room::getId));
         }
         return rooms;
+    }
+
+    public void addOldValues(Map<String, Object> model, Room room) {
+        model.put("roomExistMessage", "Room with this number exists!");
+        model.put("oldNumber", room.getNumber());
+        model.put("oldDescription", room.getDescription());
+        model.put("oldGuests", room.getGuests());
+        model.put("oldPrice", room.getPrice());
+        model.put("oldCategory", room.getCategory());
     }
 }

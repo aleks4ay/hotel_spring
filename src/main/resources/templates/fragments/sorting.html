@@ -7,15 +7,15 @@
 <body>
 
 <!-- *******************  U S E R   leftForm  *********************  -->
-<form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
+<!--<form  th:fragment="leftForm" class="sticky rounded-lg shadow p-4 mb-4"
        style="height:700px; height: 350px; background-color: rgba(96, 162, 218, 0.2);">
     <h4 th:if="${#httpServletRequest.remoteUser == null}" th:text="#{notEntered}" />
-</form>
+</form>-->
 
 
 <!-- *******************  U S E R   dateField  and sorting *********************  -->
 
-<form th:fragment="dateField" th:with="command=${userType == 'guest' ? 'user' : userType}"
+<!--<form th:fragment="dateField" th:with="command=${userType == 'guest' ? 'user' : userType}"
       method="post" th:action="${'/' + command + '/room/date'}">
     <div class="btn-group">
         <div class="mb-3 date-item">
@@ -42,7 +42,7 @@
         </div>
 
     </div>
-</form>
+</form>-->
 
 
 
@@ -53,10 +53,10 @@
     <div class="btn-group">
         <label for="field11" class="form-label date-item"> [[#{sort}]]: </label>
         <select id="field11" name="sortMethod" th:value="${sortMethod}" class="form-control date-item" style="width: 20em" required>
-            <option value="byRoomNumber" th:selected="${sortMethod == 'byRoomNumber'}"> [[#{byRoomNumber}]] </option>
-            <option value="byPrice" th:selected="${sortMethod == 'byPrice'}"> [[#{byPrice}]] </option>
-            <option value="byGuests" th:selected="${sortMethod == 'byGuests'}"> [[#{byGuests}]] </option>
-            <option value="byCategory" th:selected="${sortMethod == 'byCategory'}"> [[#{byCategory}]] </option>
+            <option value="number" th:selected="${sortMethod == 'number'}"> [[#{byRoomNumber}]] </option>
+            <option value="price" th:selected="${sortMethod == 'price'}"> [[#{byPrice}]] </option>
+            <option value="guests" th:selected="${sortMethod == 'guests'}"> [[#{byGuests}]] </option>
+            <option value="category" th:selected="${sortMethod == 'category'}"> [[#{byCategory}]] </option>
         </select>
         <button type="submit" class="btn btn-outline-success date-item">  [[#{doSort}]]  </button>
 
@@ -67,20 +67,7 @@
 
 
 <!-- *******************  U S E R   bill  *********************  -->
-<div th:fragment="bill">
-    <h2> [[#{bill}]] </h2>
-    <form  class="sticky rounded-lg shadow p-4 mb-4" method="post" th:action="@{/user/account/changeBill}"
-           style="background-color: rgba(96, 162, 218, 0.2);">
-        <h4> [[#{bill}]]: [[${bill}]] [[#{currency}]] </h4>
-        <div class="mb-3">
-            <label for="bill1" class="form-label"> [[#{sum}]]: </label>
-            <input type="number" class="form-control" id="bill1"  name="addBill" style="width: 40%"/>
-        </div>
-        <div >
-            <button type="submit" class="btn btn-outline-success" >  [[#{addBill}]] </button>
-        </div>
-    </form>
-</div>
+
 
 
 

@@ -1,185 +1,102 @@
 package org.aleks4ay.hotel.service;
 
-import org.aleks4ay.hotel.exception.NoMoneyException;
 import org.aleks4ay.hotel.exception.NotEmptyRoomException;
+import org.aleks4ay.hotel.exception.NotFoundException;
 import org.aleks4ay.hotel.model.*;
 import org.aleks4ay.hotel.repository.OrderRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
 
 @Service
-@Transactional(readOnly = true)
 public class OrderService {
-
-    private static final Logger log = LogManager.getLogger(OrderService.class);
 
     private OrderRepo orderRepo;
     private RoomService roomService;
-    private ScheduleService scheduleService;
-    private ProposalService proposalService;
 
     @Autowired
-    public void setOrderRepo(OrderRepo orderRepo) {
+    public OrderService(OrderRepo orderRepo, RoomService roomService) {
         this.orderRepo = orderRepo;
-    }
-
-    @Autowired
-    public void setRoomService(RoomService roomService) {
         this.roomService = roomService;
     }
 
-    @Autowired
-    public void setScheduleService(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
+    public Order getById(Long id) {
+        return orderRepo.findById(id).orElseThrow(() -> new NotFoundException("Order #" + id + " not found"));
     }
 
-    @Autowired
-    public void setProposalService(ProposalService proposalService) {
-        this.proposalService = proposalService;
+    public Page<Order> findAll(int numPage, int rowsOnPage, Sort sort) {
+        Pageable sortedPage = PageRequest.of(numPage, rowsOnPage, sort);
+        return orderRepo.findAll(sortedPage);
     }
 
-    public Optional<Order> getById(Long id) {
-        Optional<Order> optional = orderRepo.findById(id);
-        return optional;
+    public Page<Order> getAllByUserId(Long userId, int numPage, int rowsOnPage, Sort sort) {
+        Pageable sortedPage = PageRequest.of(numPage, rowsOnPage, sort);
+        return orderRepo.findAllByUserId(userId, sortedPage);
     }
 
-    public List<Order> getAll() {
-        List<Order> orders = (List<Order>) orderRepo.findAll();
-        orders.sort(comparing(Order::getId));
-        return orders;
+    public Order save(Order order) {
+        return orderRepo.save(order);
     }
 
-    public List<Order> getAllByUser(User user) {
-        List<Order> orders = orderRepo.findAllByUser(user);
-        orders.sort(comparing(Order::getId));
-        return orders;
-    }
-
-    @Transactional
-    public Optional<Order> save(Order order) {
+    public Optional<Order> pay(Order order) {
+        order.getUser().reduceBill(order.getCost());
+        order.setStatus(Order.Status.PAID);
+        order.getInvoice().setStatus(Invoice.Status.PAID);
         return Optional.of(orderRepo.save(order));
     }
 
-    @Transactional
-    public Optional<Order> pay(Order order) {
-        Double cost = order.getCost();
-        Double bill = order.getUser().getBill();
-        if (bill >= cost) {
-            order.getUser().setBill(order.getUser().getBill() - cost);
-            order.setStatus(Order.Status.PAID);
-            return Optional.of(orderRepo.save(order));
-        } else {
-            throw new NoMoneyException("Sorry, there are not enough funds in your account");
-        }
+    public Order create(OrderDto orderDto, User user) {
+        LocalDate arrival = UtilService.getDate(orderDto.getArrivalString());
+        LocalDate departure = UtilService.getDate(orderDto.getDepartureString());
+        return buildOrder(orderDto.getNumber(), arrival, departure, user, Role.ROLE_USER);
     }
 
     @Transactional
-    public Optional<Order> create(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user) {
-
-        Order builtOrder = buildOrder(roomNumber, dateStart, dateEnd, user, Role.ROLE_USER);
-        boolean isEmpty;
-        try {
-            isEmpty = scheduleService.checkRoom(builtOrder.getSchedule());
-        } catch (NotEmptyRoomException e) {
-            throw e;
+    public Order saveOrderIfEmpty(Order order) {
+        if (orderRepo.checkRoomByRoomId(order.getRoom().getId(), Date.valueOf(order.getArrival()),
+                Date.valueOf(order.getDeparture())) > 0) {
+            throw new NotEmptyRoomException("This room is occupied during this period!");
         }
-        if (isEmpty) {
-            return Optional.of(orderRepo.save(builtOrder));
-        }
-        return Optional.empty();
+        return orderRepo.save(order);
     }
 
-
-    @Transactional
-    public Optional<Order> createFromManager(int roomNumber, Proposal proposal, User user) {
-
-        Order builtOrder = buildOrder(roomNumber, proposal.getArrival(), proposal.getDeparture(), user, Role.ROLE_MANAGER);
-        boolean isEmpty;
-        try {
-            isEmpty = scheduleService.checkRoom(builtOrder.getSchedule());
-        } catch (NotEmptyRoomException e) {
-            throw e;
-        }
-        if (isEmpty) {
-            Optional<Order> orderOptional = Optional.of(orderRepo.save(builtOrder));
-            if (orderOptional.isPresent()) {
-                proposal.setStatus(Proposal.Status.MANAGED);
-//                Proposal proposalFromDB = proposalService.getById(proposal.getId()).get();
-//                proposalFromDB.setStatus(Proposal.Status.MANAGED);
-                proposalService.update(proposal);
-                return orderOptional;
-            }
-        }
-        return Optional.empty();
+    public Order saveOrderProposal(OrderDto dto, User user) {
+        LocalDate arrival = UtilService.getDate(dto.getArrivalString());
+        LocalDate departure = UtilService.getDate(dto.getDepartureString());
+        Order order = new Order(arrival, departure, dto.getGuests(), dto.getCategory(), LocalDateTime.now(), 0);
+        order.setStatus(Order.Status.NEW);
+        order.setUser(user);
+        return save(order);
     }
 
-    private Order buildOrder(int roomNumber, LocalDate dateStart, LocalDate dateEnd, User user, Role role) {
-
-        Room room = roomService.getByNumber(roomNumber).orElse(null);
-
-        Order tempOrder = new Order();
-        tempOrder.setRegistered(LocalDateTime.now());
-        Order.Status orderStatus = Order.Status.CONFIRMED;
-        Schedule.RoomStatus roomStatus = Schedule.RoomStatus.BOOKED;
-        if (role == Role.ROLE_MANAGER) {
-            orderStatus = Order.Status.NEW;
-            roomStatus = Schedule.RoomStatus.RESERVED;
-        }
-        Schedule schedule = new Schedule(dateStart, dateEnd, roomStatus, room);
-
-        tempOrder.setSchedule(schedule);
+    private Order buildOrder(int roomNumber, LocalDate arrival, LocalDate departure, User user, Role role) {
+        Room room = roomService.getByNumber(roomNumber);
+        Order tempOrder = new Order(arrival, departure, room.getGuests(), room.getCategory(), LocalDateTime.now(),
+                room.getPrice());
+        tempOrder.setRoom(room);
         tempOrder.setUser(user);
         user.addOrder(tempOrder);
-        tempOrder.setStatus(orderStatus);
+        tempOrder.setStatus(role == Role.ROLE_MANAGER ? Order.Status.BOOKED : Order.Status.CONFIRMED);
         return tempOrder;
-    }
-
-    public List<Order> doPagination(int positionOnPage, int page, List<Order> entities) {
-        UtilService utilService = new UtilService<Order>();
-        entities.sort(comparing(Order::getId));
-        List<Order> result = utilService.doPagination(positionOnPage, page, entities);
-        return result;
     }
 
     public OrderDto createOrderDto(HttpServletRequest request, Room room) {
         HttpSession session = request.getSession();
-        LocalDate dateStart = null;
-        LocalDate dateEnd = null;
-        if (session.getAttribute("arrival") != null) {
-            dateStart = (LocalDate) session.getAttribute("arrival");
-        }
-        if (session.getAttribute("departure") != null) {
-            dateEnd = (LocalDate) session.getAttribute("departure");
-        }
-
-        if (dateStart == null) {
-            if (dateEnd == null) {
-                dateStart = LocalDate.now();
-                dateEnd = dateStart.plusDays(1);
-            } else {
-                dateStart = dateEnd.minusDays(1);
-            }
-        } else if (dateEnd == null) {
-            dateEnd = dateStart.plusDays(1);
-        }
-
+        LocalDate start = session.getAttribute("arrival") == null ? LocalDate.now()
+                : (LocalDate) session.getAttribute("arrival");
+        LocalDate end = session.getAttribute("departure") == null ? LocalDate.now()
+                : (LocalDate) session.getAttribute("departure");
+        end = end.isEqual(start) ? start.plusDays(1) : end;
+        start = start.isAfter(end) ? end.minusDays(1) : start;
         return new OrderDto(room.getNumber(), room.getCategory(), room.getGuests(), room.getDescription(),
-                dateStart, dateEnd, room.getPrice(), room.getImgName());
+                start, end, room.getPrice(), room.getImgName());
     }
 }

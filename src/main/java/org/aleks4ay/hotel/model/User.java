@@ -1,13 +1,16 @@
 package org.aleks4ay.hotel.model;
 
+import org.aleks4ay.hotel.exception.NoMoneyException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 
 @Entity
 @Table(name = "usr")
@@ -24,20 +27,18 @@ public class User implements UserDetails{
     private String password;
     private boolean active = false;
     private LocalDateTime registered = LocalDateTime.now();
-    private double bill;
+
+    @Column(name = "bill", precision = 12, scale = 2)
+    private BigDecimal bill;
 
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    @ElementCollection(targetClass = Role.class , fetch = FetchType.EAGER) //    @Fetch(FetchMode.SUBSELECT)
+    @ElementCollection(targetClass = Role.class , fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Proposal> proposals = new ArrayList<>();
-
 
 
     public User() {
@@ -48,14 +49,14 @@ public class User implements UserDetails{
     }
 
     public User(String login, String name, String surname, String password, boolean active, LocalDateTime registered,
-                double bill) {
+                double money) {
         this.login = login;
         this.name = name;
         this.surname = surname;
         this.password = password;
         this.active = active;
         this.registered = registered;
-        this.bill = bill;
+        setBill(money);
     }
 
     @Override
@@ -66,7 +67,6 @@ public class User implements UserDetails{
         }
         return authorities;
     }
-
 
     public String getPassword() {
         return password;
@@ -148,12 +148,36 @@ public class User implements UserDetails{
         this.registered = registered;
     }
 
-    public double getBill() {
+    public BigDecimal getBill() {
         return bill;
     }
 
-    public void setBill(double bill) {
-        this.bill = bill;
+    public void setBill(BigDecimal bigDecimal) {
+        bill = bigDecimal;
+        bill = bill.setScale(2, BigDecimal.ROUND_FLOOR);
+    }
+
+    public void setBill(double money) {
+        bill = new BigDecimal(Double.toString(money));
+        bill = bill.setScale(2, BigDecimal.ROUND_FLOOR);
+    }
+
+    public void addBill(double money) {
+        if (bill == null) {
+            bill = new BigDecimal(Double.toString(money));
+            bill = bill.setScale(2, BigDecimal.ROUND_FLOOR);
+        } else {
+            bill = bill.add(new BigDecimal(Double.toString(money)));
+        }
+    }
+
+    public void reduceBill(double money) {
+        if (bill.doubleValue() > money) {
+            BigDecimal reducedMoney = new BigDecimal(Double.toString(money));
+            bill = bill.subtract(reducedMoney);
+        } else {
+            throw new NoMoneyException("Sorry, there are not enough funds in your account");
+        }
     }
 
     public Set<Role> getRoles() {
@@ -183,19 +207,6 @@ public class User implements UserDetails{
         order.setUser(this);
     }
 
-    public List<Proposal> getProposals() {
-        return proposals;
-    }
-
-    public void setProposals(List<Proposal> proposals) {
-        this.proposals = proposals;
-    }
-
-    public void addProposal(Proposal proposal) {
-        this.proposals.add(proposal);
-        proposal.setUser(this);
-    }
-
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
     }
@@ -220,10 +231,6 @@ public class User implements UserDetails{
                 : Role.ROLE_GUEST;
     }
 
-//    public String getMainRoleAsString() {
-//        return getMainRole().toString();
-//    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -234,7 +241,7 @@ public class User implements UserDetails{
                 ", active=" + active +
                 ", registered=" + registered +
                 ", role=" + roles +
-//                ", orders=" + orders +
+                ", orders=" + orders +
                 '}';
     }
 

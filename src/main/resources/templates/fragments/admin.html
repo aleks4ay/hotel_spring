@@ -25,173 +25,19 @@
 
 
 <!-- *******************  A D M I N   ROOM  *********************  -->
-<div th:fragment="rooms">
-    <h2> [[#{adm_act_2}]] </h2>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col"> [[#{n}]] </th>
-            <th scope="col"> [[#{number}]] </th>
-            <th scope="col"> [[#{category}]] </th>
-            <th scope="col"> [[#{guests}]] </th>
-            <th scope="col"> [[#{description}]] </th>
-            <th scope="col"> [[#{price}]] </th>
-            <th scope="col"> [[#{photo}]] </th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr  th:each="room,step : ${rooms}">
-                <td scope="row">
-                    <input type="hidden" value="#" th:value="${room.id}"/>
-                    <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
-                </td>
-                <td th:text="${room.number}"></td>
-                <td th:text="${room.category.title}"></td>
-                <td th:text="${room.guests}"></td>
-                <td th:text="${room.description}"></td>
-                <td th:text="${room.price}"></td>
-                <td> <img width="200px" th:src="${'/static/img/'+room.imgName}"/> </td>
-                <td th:test="${#httpServletRequest.remoteUser != Null}">
-                    <a href="#" th:href="'/admin/room/change?id=' + ${room.id} + '&pg=' + ${pg}"> [[#{change}]] </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-
 
 
 
 <!-- *******************  A D M I N   USERS  *********************  -->
-<div th:fragment="users">
-    <h2> [[#{adm_act_1}]] </h2>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col"> [[#{n}]] </th>
-            <th scope="col"> [[#{login}]] </th>
-            <th scope="col"> [[#{firstName}]] </th>
-            <th scope="col"> [[#{lastName}]] </th>
-            <th scope="col"> Active </th>
-            <th scope="col"> [[#{data_reg}]] </th>
-            <th scope="col"> [[#{role}]] </th>
-            <th scope="col"> [[#{act_4}]] </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr  th:each="user,step : ${users}">
-            <td scope="row">
-                <input type="hidden" value="#" th:value="${user.id}"/>
-                <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
-            </td>
-            <td th:text="${user.login}"></td>
-            <td th:text="${user.name}"></td>
-            <td th:text="${user.surname}"></td>
-            <td th:text="${user.active}"></td>
-            <td th:text="${user.registeredStr}"></td>
-            <td th:text="${user.mainRole.title}"></td>
-            <td> <a href="#" th:href="'/admin/user/change?id=' + ${user.id} + '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+
 
 
 <!-- *******************  A D M I N   ORDERS  *********************  -->
-<div th:fragment="orders">
-    <h2> [[#{adm_act_3}]] </h2>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col"> [[#{n}]] </th>
-            <th scope="col"> [[#{firstName}]] </th>
-            <th scope="col"> [[#{lastName}]] </th>
-            <th scope="col"> [[#{roomNumber}]] </th>
-            <th scope="col"> [[#{category}]] </th>
-            <th scope="col"> [[#{arrival}]] </th>
-            <th scope="col"> [[#{departure}]] </th>
-            <th scope="col"> [[#{guests}]] </th>
-            <th scope="col"> [[#{description}]] </th>
-            <th scope="col"> [[#{data_reg}]] </th>
-            <th scope="col"> [[#{photo}]] </th>
-            <th scope="col"> [[#{price}]] </th>
-            <!--<th scope="col"> [[#{act_4}]] </th>-->
-        </tr>
-        </thead>
-        <tbody>
-        <tr  th:each="order,step : ${orders}">
-            <td scope="row">
-                <input type="hidden" value="#" th:value="${order.id}"/>
-                <span th:text="${itemOnPage * (pg - 1) + step.count}"/>
-            </td>
-            <td th:text="${order.user.name}"></td>
-            <td th:text="${order.user.surname}"></td>
-            <td th:text="${order.schedule.room.number}"></td>
-            <td th:text="${order.schedule.room.category.title}"></td>
-            <td th:text="${order.schedule.arrival}"></td>
-            <td th:text="${order.schedule.departure}"></td>
-            <td th:text="${order.schedule.room.guests}"></td>
-            <td th:text="${order.schedule.room.description}"></td>
-            <td th:text="${order.registeredStr}"></td>
-            <td> <img width="100px" th:src="${'/static/img/' + order.schedule.room.imgName}"/> </td>
-            <td th:text="${order.correctPrice}"></td>
-            <!--<td> <a href="#" th:href="'/admin/order/change?id=' + ${user.id}+ '&pg=' + ${pg}"> [[#{act_4}]] </a> </td>-->
-        </tr>
-        </tbody>
-    </table>
-</div>
 
 
 
 <!-- *******************  A D M I N  save NEW ROOM  *********************  -->
-<form  th:fragment="newroom" class="sticky rounded-lg shadow p-4 mb-4"
-       th:object="${room}" method="post" th:action="@{/admin/newRoom}"
-      style="background-color: rgba(96, 162, 218, 0.2);">
-    <h3> [[#{new_room}]] </h3>
-    <div class="mb-3">
-        <input type="hidden" name="pg" th:value="${pg}">
-        <label for="field1" class="form-label"> [[#{number}]]:</label>
-        <input type="number" class="form-control" id="field1"  name="number" required
-               th:value="${oldNumber != null ? oldNumber :''}"/>
-        <small class="text-danger" th:if="${roomExistMessage}" th:text="#{roomExistMessage}"> </small>
-    </div>
-    <div class="mb-3">
-        <label for="field2" class="form-label"> Room category </label>
-        <select id="field2" name="category" class="col-md-12 form-control" required>
-            <!--<option>Select Category</option>-->
-            <option th:each="item : ${categories}" th:value="${item}" th:text="${item}"></option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="field3" class="form-label">  [[#{guests}]]: </label>
-        <select id="field3" class="col-md-12 form-control" name="guests" >
-            <option value="1"> 1 </option>
-            <option value="2"> 2 </option>
-            <option value="3"> 3 </option>
-            <option value="4"> 4 </option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="field4" class="form-label"> [[#{description}]]: </label>
-        <input type="text" class="form-control" id="field4" name="description" required
-               th:value="${oldDescription != null ? oldDescription :''}"/>
-    </div>
-    <div class="mb-3">
-        <label for="field5" class="form-label"> [[#{price}]]: </label>
-        <input type="number" class="form-control" id="field5" name="price" required
-               th:value="${oldPrice != null ? oldPrice :''}"/>
-    </div>
 
-    <div class="custom-file">
-        <label class="custom-file-label" for="customFile" ></label>
-        <input type="file" name="imgName" class="custom-file-input" id="customFile"/>
-    </div>
-
-    <div >
-        <button type="submit" class="btn btn-outline-success" > [[#{save}]] </button>
-    </div>
-</form>
 
 
 

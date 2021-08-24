@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml">
 <head th:insert="~{fragments/header :: head}"/>
-
 <body>
-    Request from ${pageContext.errorData.requestURI} is failed
-    <br/>
-    Servlet name or type: ${pageContext.errorData.servletName}
-    <br/>
-    Status code: ${pageContext.errorData.statusCode}
-    <br/>
-    Exception: ${pageContext.errorData.throwable}
+<div th:insert="~{fragments/header :: navbar}"> </div>
+
+<div class="container-fluid" style="margin-top:10px">
+    <div class="row">
+        <div class="col-sm-3">
+            <h2>[[#{head_text_2}]]</h2>
+            <h3>[[#{head_text_3}]]</h3>
+            <h2 class="text-danger">[[#{errorMessage}]]</h2>
+        </div>
+
+        <div class="col-sm-8">
+
+            <img style="width: 100%" th:src="@{/static/img/background.jpg}"/>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<div th:insert="~{fragments/header :: footer}"> </div>
 </body>
 </html>
+

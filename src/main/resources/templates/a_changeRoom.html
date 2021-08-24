@@ -22,8 +22,9 @@
                 <div class="mb-3">
                     <input type="hidden" name="id" th:value="${room.id}"/>
                     <input type="hidden" name="pg" th:value="${pg}"/>
+                    <input type="hidden" name="imgName" th:value="${room.imgName}"/>
                     <label for="field1" class="form-label"> [[#{number}]]:</label>
-                    <input type="number" name="number" th:value="${room.number}" class="form-control" id="field1" disabled />
+                    <input type="number" name="number" th:value="${room.number}" class="form-control" id="field1" />
                     <small class="text-danger" th:if="${roomExistMessage}" th:text="#{roomExistMessage}"> </small>
                 </div>
                 <div class="mb-3">
