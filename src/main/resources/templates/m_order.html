@@ -6,7 +6,7 @@
 <div th:insert="~{fragments/header :: navbar}"> </div>
 
 
-<div class="container-fluid" style="margin-top:10px">
+<div class="container-fluid mt-3">
     <div class="row">
 
         <div class="col-sm-2">
@@ -33,7 +33,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr  th:each="order,step : ${orders}">
+                    <tr  th:each="order,step : ${orders}" th:style="${order.status.toString()=='CANCEL' ? 'color: #d54d38' : ''}">
                         <td scope="row">
                             <input type="hidden" value="#" th:value="${order.id}"/>
                             <span th:text="${order.id}"/>

@@ -30,7 +30,7 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
     void updateInvoiceStatusByOldRegistered(Timestamp canceledDate);
 
     @Modifying
-    @Query(value = " update orders set status = 4 where status = 3 and id in (" +
+    @Query(value = " update orders set status = 4 where status = 2 and id in (" +
             "select x.order_id from order_invoice x inner join invoice i on x.invoice_id = i.id " +
             "and i.status = 'CANCEL');", nativeQuery = true)
     void updateAllOrderStatusIfInvoiceCancel();

@@ -17,7 +17,6 @@ public class InvoiceInspector {
 
     @Scheduled(fixedRate = 15 * 60 * 1000)
     public void startInvoiceInspector() {
-        System.out.println("Task doing");
         orderService.setCancelInvoice();
     }
 }
