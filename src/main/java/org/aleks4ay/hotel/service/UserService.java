@@ -59,11 +59,4 @@ public class UserService implements UserDetailsService{
     public User update(User user) {
         return userRepo.save(user);
     }
-
-    public void addOldValues(Map<String, Object> model, User user) {
-        model.put("wrongLogin", "User exists!");
-        model.put("oldLogin", user.getLogin());
-        model.put("oldFirstName", user.getName());
-        model.put("oldLastName", user.getSurname());
-    }
 }

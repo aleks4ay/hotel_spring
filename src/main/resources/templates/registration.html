@@ -9,23 +9,24 @@
 
 <div class="center1">
     <h1>Registration</h1>
+    <!--/*@thymesVar id="user" type="org.aleks4ay.hotel.model.User"*/-->
     <form class="inner_logo" method="post" th:action="@{/registration}" th:object="${user}" >
         <div class="mb-3">
             <label for="login1" class="form-label"> Login </label>
-            <input type="text" required class="form-control" id="login1" name="login" th:value="${oldLogin != null ? oldLogin :''}">
-            <small class="text-danger" th:if="${wrongLogin}" th:text="#{userExists}"> </small>
+            <input type="text" required class="form-control"  th:field="*{login}" id="login1"/>
+            <small class="text-danger" th:if="${wrongLogin}" th:text="${wrongLogin}"> </small>
         </div>
         <div class="mb-3">
             <label for="name1" class="form-label" th:text="#{firstName}"> </label>
-            <input type="text" required class="form-control" id="name1" name="name"  th:value="${oldFirstName != null ? oldFirstName :''}">
+            <input type="text" required class="form-control" id="name1" th:field="*{name}"/>
         </div>
         <div class="mb-3">
             <label for="name2" class="form-label" th:text="#{lastName}"> </label>
-            <input type="text" required class="form-control" id="name2"  name="surname" th:value="${oldLastName != null ? oldLastName : ''}">
+            <input type="text" required class="form-control" id="name2"  th:field="*{surname}"/>
         </div>
         <div class="mb-3">
             <label for="passwordField" class="form-label" th:text="#{password}"> </label>
-            <input type="password" required class="form-control" id="passwordField" name="password">
+            <input type="password" required class="form-control" id="passwordField" name="password"/>
         </div>
 
 

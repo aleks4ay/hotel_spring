@@ -8,8 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
@@ -24,19 +27,27 @@ public class RegistrationController {
     }
 
     @GetMapping("/registration")
-    public String registration() {
+    public String registration(Map<String, Object> model) {
+        model.put("user", new User());
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String newUser(@ModelAttribute User user, Map<String, Object> model) {
+    public String newUser(@Valid @ModelAttribute User user, BindingResult bindingResult, Map<String, Object> model) {
+
+        if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors() ) {
+                model.put("wrongLogin", error.getDefaultMessage());
+            }
+            return "registration";
+        }
         try {
             user.setActive(true);
             user.addRole(Role.ROLE_USER);
             userService.save(user);
             log.info("Was registered new User '{}'", user.getLogin());
         } catch (AlreadyException e) {
-            userService.addOldValues(model, user);
+            model.put("wrongLogin", "User with login " + user.getLogin() + " already exists!");
             return "registration";
         }
         return "redirect:/login";

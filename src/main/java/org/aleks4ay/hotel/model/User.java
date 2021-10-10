@@ -6,6 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +23,12 @@ public class User implements UserDetails{
     private Long id;
 
     @Column(unique = true)
+    @Size(min = 4, max = 100)
+    @Pattern(regexp = "^[_A-Za-z0-9.]+$",
+            message="{validation.login.Characters.message}")
+//            message="Login can contain these characters: letters, numbers, point and underscore")
     private String login;
+
     private String name;
     private String surname;
     private String password;
@@ -238,6 +245,7 @@ public class User implements UserDetails{
                 ", login='" + login + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
+                ", bill=" + bill +
                 ", active=" + active +
                 ", registered=" + registered +
                 ", role=" + roles +

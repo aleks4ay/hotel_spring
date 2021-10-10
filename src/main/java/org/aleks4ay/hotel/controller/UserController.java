@@ -135,6 +135,7 @@ class UserController {
     @GetMapping("user/account/bill")
     public String getBill(@AuthenticationPrincipal User user, Map<String, Object> model, HttpServletRequest request) {
         getPageNumber(model, request);
+        user.setBill(userService.getByLogin(user.getLogin()).getBill());
         model.put("action", "bill");
         model.put("bill", user.getBill());
         return "u_bill";
